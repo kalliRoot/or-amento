@@ -125,7 +125,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
   <div class="card">
     <div class="card-header">&#128203; Identificação do Orçamento</div>
     <div class="card-body">
-      <div class="form-grid form-grid-4">
+      <div class="form-grid form-grid-3">
         <div>
           <label>N° do Orçamento</label>
           <input type="text" id="numOrc" value="ORC-2025-001" oninput="atualizar()">
@@ -138,9 +138,15 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
           <label>Válido até</label>
           <input type="date" id="dataValidade" oninput="atualizar()">
         </div>
+      </div>
+      <div class="form-grid form-grid-2" style="margin-top:14px;">
         <div>
           <label>Responsável Técnico</label>
           <input type="text" id="respTec" value="Jéssica Dadalt" oninput="atualizar()">
+        </div>
+        <div>
+          <label>CREA do Responsável</label>
+          <input type="text" id="respCrea" value="5071099466-SP" oninput="atualizar()" placeholder="Ex: 5071099466-SP">
         </div>
       </div>
     </div>
@@ -308,7 +314,7 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     </div>
     <div class="pdf-contact">
       Rua Tiradentes, 2080 – Assis – SP<br>
-      agrovoo.tec.br | contato@agrovoo.tec.br<br>
+      agrovoo.tec.br | <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="20434f4e5441544f604147524f564f4f0e5445430e4252">[email&#160;protected]</a><br>
       (18) 99706-9421<br>
       CNPJ: 62.688.987/0001-36
     </div>
@@ -407,18 +413,18 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
       <div class="pdf-sig-line"></div>
       <div style="font-size:10px;font-weight:700;">AGROVOO TECNOLOGIA AGRÍCOLA</div>
       <div style="font-size:9px;margin-top:3px;" id="pdf-sig-resp"></div>
-      <div style="font-size:8.5px;color:#555;">CREA: 5071099466-SP</div>
+      <div style="font-size:8.5px;color:#555;" id="pdf-sig-resp-crea"></div>
     </div>
   </div>
 
   <div class="pdf-footer">
     <strong>AGROVOO TECNOLOGIA AGRÍCOLA</strong> — Pulverização Inteligente &nbsp;|&nbsp;
-    Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421<br>
+    Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d0b3bfbea4b1a4bf90b1b7a2bfa6bfbffea4b5b3feb2a2">[email&#160;protected]</a> &nbsp;|&nbsp; (18) 99706-9421<br>
     CNPJ: 62.688.987/0001-36 &nbsp;|&nbsp; Registro MAPA: SP 009116-2
   </div>
 </div><!-- fim pdfPage -->
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function fmt(v){return'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtDate(s){if(!s)return'—';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
@@ -547,6 +553,7 @@ async function gerarPDF(){
   t("pdf-sig-cli",v("cliNome"));
   t("pdf-sig-cli-cnpj",v("cliCnpj")?"CNPJ/CPF: "+v("cliCnpj"):"");
   t("pdf-sig-resp",v("respTec"));
+  t("pdf-sig-resp-crea",v("respCrea")?"CREA: "+v("respCrea"):"");
 
   // Tabela de serviços no PDF
   var pdfTb=document.getElementById("pdf-srv-body");
@@ -604,19 +611,4 @@ async function gerarPDF(){
 
   doc.save("Orcamento_AgroVoo_"+v("numOrc").replace(/[^a-zA-Z0-9]/g,"_")+".pdf");
 
-  page.style.left="-9999px";page.style.position="fixed";page.style.zIndex="";
-  btn.disabled=false;btn.textContent="📄 Gerar PDF do Orçamento";
-}
-
-function limparForm(){
-  if(!confirm("Limpar todos os dados?"))return;
-  servicos=[{desc:"",cultura:"",ha:0,vlrHa:0,obs:""}];
-  renderServicos();
-}
-
-// INIT
-renderServicos();
-atualizar();
-</script>
-</body>
-</html>
+  pag
