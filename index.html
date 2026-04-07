@@ -12,19 +12,16 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:"Inter",Arial,sans-serif;background:#f1f5f1;}
 
-/* ── TOPO / NAV ── */
 .nav{background:#166534;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25);}
 .nav-logo{font-size:22px;font-weight:900;color:white;letter-spacing:3px;}
 .nav-sub{font-size:9px;color:#bbf7d0;letter-spacing:1.5px;margin-top:1px;}
 .nav-badge{background:#bbf7d0;color:#166534;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
 
-/* ── LAYOUT ── */
 .container{max-width:900px;margin:0 auto;padding:28px 16px 60px;}
 .card{background:white;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.08);margin-bottom:20px;overflow:hidden;}
 .card-header{background:#166534;color:white;padding:12px 20px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
 .card-body{padding:20px;}
 
-/* ── GRID DE CAMPOS ── */
 .form-grid{display:grid;gap:14px;}
 .form-grid-2{grid-template-columns:1fr 1fr;}
 .form-grid-3{grid-template-columns:1fr 1fr 1fr;}
@@ -37,19 +34,17 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .input-prefix span{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:#888;font-weight:600;}
 .input-prefix input{padding-left:26px;}
 
-/* ── SERVIÇOS TABLE ── */
 .srv-table{width:100%;border-collapse:collapse;font-size:12px;}
 .srv-table th{background:#f0fdf4;color:#166534;font-weight:700;padding:9px 10px;text-align:left;border-bottom:2px solid #d1fae5;font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
 .srv-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
 .srv-table tr:hover td{background:#f9fafb;}
-.srv-table input,srv-table select{border:1.5px solid #e5e7eb;border-radius:5px;padding:6px 8px;font-size:12px;width:100%;}
+.srv-table input{border:1.5px solid #e5e7eb;border-radius:5px;padding:6px 8px;font-size:12px;width:100%;}
 .srv-table input:focus{border-color:#166534;outline:none;}
 .btn-row-add{background:#166534;color:white;border:none;padding:8px 18px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:10px;}
 .btn-row-add:hover{background:#14532d;}
 .btn-row-del{background:#fee2e2;color:#dc2626;border:none;width:26px;height:26px;border-radius:50%;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
 .btn-row-del:hover{background:#fca5a5;}
 
-/* ── TOTAIS ── */
 .totals-box{background:#f0fdf4;border:1px solid #d1fae5;border-radius:10px;padding:18px 20px;}
 .totals-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #e5e7eb;font-size:13px;}
 .totals-row:last-child{border-bottom:none;}
@@ -57,16 +52,6 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .totals-value{font-weight:600;color:#1a1a1a;}
 .totals-total{background:#166534;color:white;border-radius:8px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-weight:700;font-size:16px;}
 
-/* ── VALIDADE / OBS ── */
-.validity-tag{display:inline-flex;align-items:center;gap:6px;background:#fef9c3;color:#854d0e;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid #fde68a;}
-
-/* ── BADGE DIFICULDADE ── */
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.badge-alta{background:#fee2e2;color:#dc2626;}
-.badge-media{background:#fef9c3;color:#92400e;}
-.badge-baixa{background:#d1fae5;color:#166534;}
-
-/* ── BOTOES ACAO ── */
 .btn-primary{background:#166534;color:white;border:none;padding:13px 28px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(22,101,52,.3);transition:background .2s,transform .1s;}
 .btn-primary:hover{background:#14532d;transform:translateY(-1px);}
 .btn-primary:disabled{background:#9ca3af;cursor:not-allowed;transform:none;box-shadow:none;}
@@ -74,8 +59,13 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .btn-secondary:hover{background:#f0fdf4;}
 .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap;}
 
-/* ── PREVIEW PDF ── */
-#pdfPage{width:210mm;background:white;padding:14mm 13mm;box-sizing:border-box;position:fixed;left:-9999px;top:0;}
+/* TOAST */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#166534;color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);opacity:0;transition:opacity .4s;pointer-events:none;z-index:9999;}
+#toast.show{opacity:1;}
+#toast.error{background:#dc2626;}
+
+/* PDF PAGE */
+#pdfPage{width:210mm;background:white;padding:14mm 13mm;box-sizing:border-box;position:fixed;left:-9999px;top:0;z-index:-1;}
 .pdf-header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:3px solid #166534;padding-bottom:10px;margin-bottom:14px;}
 .pdf-logo{font-size:28px;font-weight:900;color:#166534;letter-spacing:2px;line-height:1;}
 .pdf-sub{font-size:8px;font-weight:700;color:#166534;letter-spacing:1px;margin-top:2px;}
@@ -101,14 +91,14 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .pdf-footer strong{color:#166534;}
 .pdf-sig{display:grid;grid-template-columns:1fr 1fr;gap:30px;text-align:center;margin-top:18px;}
 .pdf-sig-line{border-top:1px solid #333;margin:30px auto 6px;width:160px;}
-.pdf-num{background:#f0fdf4;border:1px solid #d1fae5;border-radius:5px;padding:4px 10px;font-size:10px;font-weight:700;color:#166534;display:inline-block;margin-top:4px;}
 .pdf-alerta{background:#fff7ed;border:1px solid #fdba74;border-radius:5px;padding:6px 10px;font-size:10px;color:#9a3412;display:flex;gap:6px;align-items:flex-start;margin-top:6px;}
 
-/* RESPONSIVE */
 @media(max-width:640px){.form-grid-2,.form-grid-3,.form-grid-4{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
+
+<div id="toast"></div>
 
 <!-- NAV -->
 <div class="nav">
@@ -116,14 +106,14 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     <div class="nav-logo">AGROVOO</div>
     <div class="nav-sub">TECNOLOGIA AGRÍCOLA — Pulverização Inteligente</div>
   </div>
-  <div class="nav-badge">&#128196; Gerador de Orçamentos</div>
+  <div class="nav-badge">📄 Gerador de Orçamentos</div>
 </div>
 
 <div class="container">
 
   <!-- NUMERO / DATA -->
   <div class="card">
-    <div class="card-header">&#128203; Identificação do Orçamento</div>
+    <div class="card-header">📋 Identificação do Orçamento</div>
     <div class="card-body">
       <div class="form-grid form-grid-3">
         <div>
@@ -154,7 +144,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
   <!-- CLIENTE -->
   <div class="card">
-    <div class="card-header">&#128100; Dados do Cliente</div>
+    <div class="card-header">👤 Dados do Cliente</div>
     <div class="card-body">
       <div class="form-grid form-grid-2" style="margin-bottom:14px;">
         <div>
@@ -185,7 +175,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
   <!-- SERVIÇOS -->
   <div class="card">
-    <div class="card-header">&#128640; Serviços / Itens do Orçamento</div>
+    <div class="card-header">🚀 Serviços / Itens do Orçamento</div>
     <div class="card-body">
       <table class="srv-table" id="srvTable">
         <thead>
@@ -199,8 +189,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
             <th style="width:7%"></th>
           </tr>
         </thead>
-        <tbody id="srvBody">
-        </tbody>
+        <tbody id="srvBody"></tbody>
       </table>
       <button class="btn-row-add" onclick="addServico()">+ Adicionar Serviço</button>
     </div>
@@ -208,7 +197,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
   <!-- CONDIÇÕES OPERACIONAIS -->
   <div class="card">
-    <div class="card-header">&#9992; Condições Operacionais</div>
+    <div class="card-header">✈ Condições Operacionais</div>
     <div class="card-body">
       <div class="form-grid form-grid-3" style="margin-bottom:14px;">
         <div>
@@ -222,9 +211,9 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
         <div>
           <label>Grau de Dificuldade</label>
           <select id="dificuldade" onchange="atualizar()">
-            <option value="Alta" selected>&#128308; Alta — Muitos obstáculos</option>
-            <option value="Média">&#128993; Média — Obstáculos moderados</option>
-            <option value="Baixa">&#128994; Baixa — Área aberta</option>
+            <option value="Alta" selected>🔴 Alta — Muitos obstáculos</option>
+            <option value="Média">🟡 Média — Obstáculos moderados</option>
+            <option value="Baixa">🟢 Baixa — Área aberta</option>
           </select>
         </div>
       </div>
@@ -237,7 +226,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
           <label>Período previsto de execução</label>
           <input type="text" id="periodoExec" value="A combinar" placeholder="Ex: julho/2025" oninput="atualizar()" style="margin-bottom:10px;">
           <label>Deslocamento (km)</label>
-          <input type="number" id="deslocKm" value="0" min="0" oninput="calcDeslocamento()">
+          <input type="number" id="deslocKm" value="0" min="0" oninput="atualizar()">
         </div>
       </div>
     </div>
@@ -245,18 +234,24 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
   <!-- RESUMO FINANCEIRO -->
   <div class="card">
-    <div class="card-header">&#128176; Resumo Financeiro</div>
+    <div class="card-header">💰 Resumo Financeiro</div>
     <div class="card-body">
       <div class="form-grid form-grid-2">
         <div class="totals-box">
-          <div class="totals-row"><span class="totals-label">Subtotal serviços</span><span class="totals-value" id="subtotalSrv">R$ 0,00</span></div>
           <div class="totals-row">
-            <span class="totals-label">Deslocamento (<span id="kmLabel">0</span> km × R$ <input type="number" id="vlrKm" value="3" min="0" style="width:50px;padding:2px 6px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="calcDeslocamento()"> /km)</span>
+            <span class="totals-label">Subtotal serviços</span>
+            <span class="totals-value" id="subtotalSrv">R$ 0,00</span>
+          </div>
+          <div class="totals-row">
+            <span class="totals-label">Deslocamento (<span id="kmLabel">0</span> km × R$ <input type="number" id="vlrKm" value="3" min="0" style="width:50px;padding:2px 6px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="atualizar()"> /km)</span>
             <span class="totals-value" id="subtotalDesl">R$ 0,00</span>
           </div>
           <div class="totals-row">
             <span class="totals-label">Outros / Adicionais</span>
-            <span class="totals-value input-prefix" style="width:130px;"><span>R$</span><input type="number" id="vlrOutros" value="0" min="0" style="padding-left:26px;padding-right:6px;width:130px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="atualizar()"></span>
+            <span class="totals-value input-prefix" style="width:130px;">
+              <span>R$</span>
+              <input type="number" id="vlrOutros" value="0" min="0" style="padding-left:26px;padding-right:6px;width:130px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="atualizar()">
+            </span>
           </div>
           <div class="totals-total">
             <span>TOTAL GERAL</span>
@@ -284,7 +279,7 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
 
   <!-- OBSERVAÇÕES GERAIS -->
   <div class="card">
-    <div class="card-header">&#128221; Observações Gerais</div>
+    <div class="card-header">📝 Observações Gerais</div>
     <div class="card-body">
       <textarea id="obsGeral" rows="4" oninput="atualizar()" placeholder="Condições climáticas mínimas, responsabilidades, prazo de validade do orçamento...">- Este orçamento tem validade de 15 dias a partir da data de emissão.
 - A execução do serviço está condicionada às condições climáticas adequadas (vento ≤ 10 km/h, sem chuva).
@@ -295,8 +290,8 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
 
   <!-- AÇÕES -->
   <div class="actions">
-    <button class="btn-secondary" onclick="limparForm()">&#10006; Limpar</button>
-    <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">&#128196; Gerar PDF do Orçamento</button>
+    <button class="btn-secondary" onclick="limparForm()">✖ Limpar</button>
+    <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">📄 Gerar PDF do Orçamento</button>
   </div>
 
 </div><!-- fim container -->
@@ -314,13 +309,12 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     </div>
     <div class="pdf-contact">
       Rua Tiradentes, 2080 – Assis – SP<br>
-      agrovoo.tec.br | <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="20434f4e5441544f604147524f564f4f0e5445430e4252">[email&#160;protected]</a><br>
+      agrovoo.tec.br | contato@agrovoo.tec.br<br>
       (18) 99706-9421<br>
       CNPJ: 62.688.987/0001-36
     </div>
   </div>
 
-  <!-- INFO ORCAMENTO -->
   <div class="pdf-grid2" style="margin-bottom:6px;">
     <div>
       <div class="pdf-sec" style="margin-top:0;">Dados do Cliente</div>
@@ -344,7 +338,6 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     </div>
   </div>
 
-  <!-- SERVIÇOS -->
   <div class="pdf-sec">Serviços / Itens</div>
   <table class="pdf-table" id="pdf-srv-table">
     <thead>
@@ -360,7 +353,6 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     <tbody id="pdf-srv-body"></tbody>
   </table>
 
-  <!-- CONDIÇÕES OPERACIONAIS -->
   <div class="pdf-sec">Condições Operacionais</div>
   <div class="pdf-box">
     <div class="pdf-row"><span class="pdf-lbl">Aeronave:</span><span class="pdf-val" id="pdf-op-aeronave"></span></div>
@@ -368,12 +360,11 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     <div class="pdf-row"><span class="pdf-lbl">Dificuldade:</span><span class="pdf-val" id="pdf-op-dif"></span></div>
     <div class="pdf-row" style="border:none;align-items:flex-start;padding-top:5px;"><span class="pdf-lbl">Condições:</span><span class="pdf-val" id="pdf-op-cond" style="white-space:pre-wrap;"></span></div>
   </div>
-  <div class="pdf-alerta" id="pdf-alerta-obst">
-    <span>&#9888;</span>
+  <div class="pdf-alerta">
+    <span>⚠</span>
     <span id="pdf-alerta-txt"></span>
   </div>
 
-  <!-- FINANCEIRO -->
   <div class="pdf-sec">Resumo Financeiro</div>
   <div class="pdf-box">
     <div class="pdf-grid2">
@@ -394,14 +385,11 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     <span id="pdf-total-val"></span>
   </div>
 
-  <!-- OBSERVAÇÕES -->
   <div class="pdf-sec">Observações Gerais</div>
   <div class="pdf-obs" id="pdf-obs-geral"></div>
 
-  <!-- VALIDADE -->
   <div class="pdf-validity" id="pdf-validity-bar"></div>
 
-  <!-- ASSINATURAS -->
   <div class="pdf-sig">
     <div>
       <div class="pdf-sig-line"></div>
@@ -419,29 +407,45 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
 
   <div class="pdf-footer">
     <strong>AGROVOO TECNOLOGIA AGRÍCOLA</strong> — Pulverização Inteligente &nbsp;|&nbsp;
-    Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d0b3bfbea4b1a4bf90b1b7a2bfa6bfbffea4b5b3feb2a2">[email&#160;protected]</a> &nbsp;|&nbsp; (18) 99706-9421<br>
+    Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421<br>
     CNPJ: 62.688.987/0001-36 &nbsp;|&nbsp; Registro MAPA: SP 009116-2
   </div>
 </div><!-- fim pdfPage -->
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function fmt(v){return'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtDate(s){if(!s)return'—';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 function v(id){return(document.getElementById(id)||{}).value||'';}
 function t(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
 
+function showToast(msg, isError){
+  var el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='show'+(isError?' error':'');
+  setTimeout(function(){el.className='';},3500);
+}
+
 // ── INICIALIZA DATAS ─────────────────────────────────────────────────────────
 (function(){
   var hoje=new Date();
-  var validade=new Date();validade.setDate(hoje.getDate()+15);
+  var validade=new Date();
+  validade.setDate(hoje.getDate()+15);
   function toInput(d){return d.toISOString().split("T")[0];}
   document.getElementById("dataEmissao").value=toInput(hoje);
   document.getElementById("dataValidade").value=toInput(validade);
 })();
 
 // ── SERVIÇOS ─────────────────────────────────────────────────────────────────
-var servicos=[{desc:"Aplicação de Herbicida",cultura:"Área urbana / lotes",ha:30,vlrHa:200,obs:"Matar ervas daninhas (mato). Voo sobre casas construídas com muitos obstáculos."}];
+var servicos=[{
+  desc:"Aplicação de Herbicida",
+  cultura:"Área urbana / lotes",
+  ha:30,
+  vlrHa:200,
+  obs:"Matar ervas daninhas (mato). Voo sobre casas construídas com muitos obstáculos."
+}];
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function renderServicos(){
   var tb=document.getElementById("srvBody");
@@ -459,10 +463,8 @@ function renderServicos(){
       "<td style=\"text-align:center;\"><button class=\"btn-row-del\" onclick=\"delServico("+i+")\" "+(servicos.length<=1?"disabled":"")+">&#215;</button></td>";
     tb.appendChild(tr);
   });
-  atualizar();
+  atualizarTotais();
 }
-
-function esc(s){return String(s).replace(/"/g,"&quot;");}
 
 function addServico(){
   servicos.push({desc:"",cultura:"",ha:0,vlrHa:0,obs:""});
@@ -476,14 +478,7 @@ function delServico(i){
 }
 
 // ── CALCULOS ─────────────────────────────────────────────────────────────────
-function calcDeslocamento(){
-  var km=parseFloat(v("deslocKm"))||0;
-  var vlrKm=parseFloat(document.getElementById("vlrKm").value)||0;
-  document.getElementById("kmLabel").textContent=km;
-  atualizar();
-}
-
-function atualizar(){
+function atualizarTotais(){
   var subSrv=servicos.reduce(function(acc,s){return acc+(parseFloat(s.ha)||0)*(parseFloat(s.vlrHa)||0);},0);
   var km=parseFloat(v("deslocKm"))||0;
   var vlrKm=parseFloat(document.getElementById("vlrKm").value)||0;
@@ -494,25 +489,28 @@ function atualizar(){
   document.getElementById("subtotalDesl").textContent=fmt(desl);
   document.getElementById("totalGeral").textContent=fmt(total);
   document.getElementById("kmLabel").textContent=km;
-  renderServicos_apenasValores();
-}
-
-function renderServicos_apenasValores(){
+  // Atualiza totais na tabela sem re-render completo
   var rows=document.querySelectorAll("#srvBody tr");
   rows.forEach(function(tr,i){
     if(servicos[i]){
-      var total=(parseFloat(servicos[i].ha)||0)*(parseFloat(servicos[i].vlrHa)||0);
-      tr.cells[4].textContent=fmt(total);
+      var tot=(parseFloat(servicos[i].ha)||0)*(parseFloat(servicos[i].vlrHa)||0);
+      tr.cells[4].textContent=fmt(tot);
     }
   });
 }
 
-// ── GERAR PDF ────────────────────────────────────────────────────────────────
-async function gerarPDF(){
-  var btn=document.getElementById("btnGerar");
-  btn.disabled=true;btn.textContent="Gerando...";
+function atualizar(){atualizarTotais();}
 
-  // Popula o pdfPage
+// ── POPULAR PDF ───────────────────────────────────────────────────────────────
+function popularPDF(){
+  var km=parseFloat(v("deslocKm"))||0;
+  var vlrKm=parseFloat(document.getElementById("vlrKm").value)||0;
+  var desl=km*vlrKm;
+  var subSrv=servicos.reduce(function(acc,s){return acc+(parseFloat(s.ha)||0)*(parseFloat(s.vlrHa)||0);},0);
+  var outros=parseFloat(document.getElementById("vlrOutros").value)||0;
+  var total=subSrv+desl+outros;
+  var dif=v("dificuldade");
+
   t("pdf-num-label","N° "+v("numOrc"));
   t("pdf-cli-nome",v("cliNome"));
   t("pdf-cli-cnpj",v("cliCnpj"));
@@ -526,20 +524,13 @@ async function gerarPDF(){
   t("pdf-id-periodo",v("periodoExec"));
   t("pdf-op-aeronave",v("aeronave"));
   t("pdf-op-piloto",v("piloto"));
-  t("pdf-op-dif",v("dificuldade")+" — conforme descrito abaixo");
-  t("pdf-op-cond",v("condicoesOp"));
-  var dif=v("dificuldade");
-  document.getElementById("pdf-alerta-txt").textContent=
+  t("pdf-op-dif",dif+" — conforme descrito abaixo");
+  document.getElementById("pdf-op-cond").textContent=v("condicoesOp");
+
+  t("pdf-alerta-txt",
     dif==="Alta"?"ATENÇÃO: Área com alto grau de dificuldade operacional. Presença de obstáculos significativos que exigem piloto habilitado e precauções extras de segurança.":
     dif==="Média"?"ATENÇÃO: Área com obstáculos moderados. Recomenda-se vistoria prévia do local antes da execução.":
-    "Área de baixa dificuldade operacional. Condições favoráveis para a execução do serviço.";
-
-  var km=parseFloat(v("deslocKm"))||0;
-  var vlrKm=parseFloat(document.getElementById("vlrKm").value)||0;
-  var desl=km*vlrKm;
-  var subSrv=servicos.reduce(function(acc,s){return acc+(parseFloat(s.ha)||0)*(parseFloat(s.vlrHa)||0);},0);
-  var outros=parseFloat(document.getElementById("vlrOutros").value)||0;
-  var total=subSrv+desl+outros;
+    "Área de baixa dificuldade operacional. Condições favoráveis para a execução do serviço.");
 
   t("pdf-fin-srv",fmt(subSrv));
   t("pdf-fin-desl",km>0?fmt(desl)+" ("+km+" km × "+fmt(vlrKm)+"/km)":"—");
@@ -573,42 +564,123 @@ async function gerarPDF(){
 
   // Linha total
   var trTot=document.createElement("tr");
-  trTot.style.background="#f0fdf4";trTot.style.fontWeight="700";
-  trTot.innerHTML="<td colspan=\"4\" style=\"text-align:right;font-weight:700;\">TOTAL DOS SERVIÇOS</td><td style=\"text-align:right;color:#166534;font-weight:900;\">"+fmt(subSrv)+"</td><td></td>";
+  trTot.style.background="#f0fdf4";
+  trTot.style.fontWeight="700";
+  trTot.innerHTML=
+    "<td colspan=\"4\" style=\"text-align:right;font-weight:700;\">TOTAL DOS SERVIÇOS</td>"+
+    "<td style=\"text-align:right;color:#166534;font-weight:900;\">"+fmt(subSrv)+"</td>"+
+    "<td></td>";
   pdfTb.appendChild(trTot);
+}
 
-  // Renderiza
-  var page=document.getElementById("pdfPage");
-  page.style.left="0";page.style.position="absolute";page.style.top="0";page.style.zIndex="-1";
-  await new Promise(function(r){setTimeout(r,200);});
+// ── GERAR PDF ────────────────────────────────────────────────────────────────
+async function gerarPDF(){
+  var btn=document.getElementById("btnGerar");
+  btn.disabled=true;
+  btn.textContent="⏳ Gerando PDF...";
 
-  var canvas=await html2canvas(page,{scale:2,useCORS:true,logging:false,backgroundColor:"#ffffff",width:page.offsetWidth,height:page.offsetHeight});
-  var imgData=canvas.toDataURL("image/jpeg",0.97);
-  var doc=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
-  var pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
-  var ratio=canvas.width/canvas.height;
-  var iw=pw,ih=iw/ratio;
+  try {
+    popularPDF();
 
-  // Se maior que A4, divide em páginas
-  if(ih<=ph){
-    doc.addImage(imgData,"JPEG",0,0,iw,ih);
-  } else {
-    // Divide automaticamente
-    var totalH=canvas.height;
-    var pageH=Math.floor(canvas.width*(ph/pw));
-    var y=0,pg=0;
-    while(y<totalH){
-      var sliceH=Math.min(pageH,totalH-y);
-      var c2=document.createElement("canvas");
-      c2.width=canvas.width;c2.height=sliceH;
-      var ctx=c2.getContext("2d");
-      ctx.drawImage(canvas,0,-y);
-      if(pg>0)doc.addPage();
-      doc.addImage(c2.toDataURL("image/jpeg",0.97),"JPEG",0,0,iw,iw*(sliceH/canvas.width));
-      y+=pageH;pg++;
+    var page=document.getElementById("pdfPage");
+    // Torna visível temporariamente para renderização
+    page.style.left="0px";
+    page.style.position="absolute";
+    page.style.top="0px";
+    page.style.zIndex="-1";
+
+    // Aguarda renderização
+    await new Promise(function(r){setTimeout(r,300);});
+
+    var canvas=await html2canvas(page,{
+      scale:2,
+      useCORS:true,
+      logging:false,
+      backgroundColor:"#ffffff",
+      width:page.offsetWidth,
+      height:page.offsetHeight,
+      windowWidth:page.offsetWidth,
+      windowHeight:page.offsetHeight
+    });
+
+    // Volta à posição oculta
+    page.style.left="-9999px";
+
+    var imgData=canvas.toDataURL("image/jpeg",0.95);
+    var doc=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+    var pw=doc.internal.pageSize.getWidth();
+    var ph=doc.internal.pageSize.getHeight();
+
+    // Calcula a altura proporcional da imagem em mm
+    var imgW=canvas.width;
+    var imgH=canvas.height;
+    var ratio=imgH/imgW;
+    var pdfImgH=pw*ratio;
+
+    if(pdfImgH<=ph){
+      // Cabe em uma página
+      doc.addImage(imgData,"JPEG",0,0,pw,pdfImgH);
+    } else {
+      // Divide em múltiplas páginas
+      var pageHeightPx=Math.floor(imgW*(ph/pw));
+      var y=0;
+      var pageNum=0;
+      while(y<imgH){
+        var sliceH=Math.min(pageHeightPx,imgH-y);
+        var c2=document.createElement("canvas");
+        c2.width=imgW;
+        c2.height=sliceH;
+        var ctx=c2.getContext("2d");
+        ctx.drawImage(canvas,0,-y);
+        if(pageNum>0) doc.addPage();
+        var sliceRatio=sliceH/imgW;
+        doc.addImage(c2.toDataURL("image/jpeg",0.95),"JPEG",0,0,pw,pw*sliceRatio);
+        y+=pageHeightPx;
+        pageNum++;
+      }
     }
+
+    var nomeArq="Orcamento_AgroVoo_"+(v("numOrc").replace(/[^a-zA-Z0-9]/g,"_"))+".pdf";
+    doc.save(nomeArq);
+    showToast("✅ PDF salvo com sucesso: "+nomeArq);
+
+  } catch(err) {
+    console.error("Erro ao gerar PDF:", err);
+    showToast("❌ Erro ao gerar PDF. Tente novamente.", true);
+    document.getElementById("pdfPage").style.left="-9999px";
+  } finally {
+    btn.disabled=false;
+    btn.innerHTML="📄 Gerar PDF do Orçamento";
   }
+}
 
-  doc.save("Orcamento_AgroVoo_"+v("numOrc").replace(/[^a-zA-Z0-9]/g,"_")+".pdf");
+// ── LIMPAR ────────────────────────────────────────────────────────────────────
+function limparForm(){
+  if(!confirm("Deseja limpar todos os campos do formulário?")) return;
+  document.getElementById("numOrc").value="ORC-2025-001";
+  document.getElementById("respTec").value="";
+  document.getElementById("respCrea").value="";
+  document.getElementById("cliNome").value="";
+  document.getElementById("cliCnpj").value="";
+  document.getElementById("cliEnd").value="";
+  document.getElementById("cliMun").value="";
+  document.getElementById("cliTel").value="";
+  document.getElementById("aeronave").value="";
+  document.getElementById("piloto").value="";
+  document.getElementById("condicoesOp").value="";
+  document.getElementById("periodoExec").value="";
+  document.getElementById("deslocKm").value="0";
+  document.getElementById("vlrOutros").value="0";
+  document.getElementById("obsGeral").value="";
+  document.getElementById("obsPgto").value="";
+  document.getElementById("chavePix").value="";
+  servicos=[{desc:"",cultura:"",ha:0,vlrHa:0,obs:""}];
+  renderServicos();
+  showToast("Formulário limpo com sucesso.");
+}
 
-  pag
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderServicos();
+</script>
+</body>
+</html>
