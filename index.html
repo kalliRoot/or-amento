@@ -19,7 +19,7 @@ body{font-family:"Inter",Arial,sans-serif;background:#f1f5f1;}
 
 .container{max-width:950px;margin:0 auto;padding:28px 16px 60px;}
 .card{background:white;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.08);margin-bottom:20px;overflow:hidden;}
-.card-header{background:#166534;color:white;padding:12px 20px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+.card-header{background:#166534;color:white;padding:12px 20px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .card-body{padding:20px;}
 
 .form-grid{display:grid;gap:14px;}
@@ -99,6 +99,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
 <div id="toast"></div>
 
+<!-- NAV -->
 <div class="nav">
   <div>
     <div class="nav-logo">AGROVOO</div>
@@ -109,6 +110,23 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
 <div class="container">
 
+  <!-- IMPORTAR COMPONENT -->
+  <div class="card" style="border: 2px dashed #166534; background: #f0fdf4;">
+    <div class="card-body flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+      <div>
+        <h3 class="font-bold text-emerald-800 text-sm uppercase tracking-wider">🔄 Reajustar ou Copiar Orçamento</h3>
+        <p class="text-xs text-emerald-700 mt-1">Carregue o arquivo de dados (.json) gerado anteriormente para preencher tudo instantaneamente.</p>
+      </div>
+      <div>
+        <label class="btn-secondary text-xs cursor-pointer inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-emerald-700 font-bold hover:bg-emerald-50 text-emerald-800">
+          📂 Carregar Arquivo de Dados
+          <input type="file" id="importFile" accept=".json" class="hidden" onchange="importarOrcamento(event)">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUMERO / DATA -->
   <div class="card">
     <div class="card-header">📋 Identificação do Orçamento</div>
     <div class="card-body">
@@ -143,6 +161,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
   </div>
 
+  <!-- CLIENTE -->
   <div class="card">
     <div class="card-header">👤 Dados do Cliente</div>
     <div class="card-body">
@@ -173,6 +192,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
   </div>
 
+  <!-- SERVIÇOS -->
   <div class="card">
     <div class="card-header">🚀 Serviços / Itens do Orçamento</div>
     <div class="card-body">
@@ -194,6 +214,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
   </div>
 
+  <!-- CONDIÇÕES OPERACIONAIS -->
   <div class="card">
     <div class="card-header">✈ Condições Operacionais</div>
     <div class="card-body">
@@ -224,6 +245,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
   </div>
 
+  <!-- RESUMO FINANCEIRO -->
   <div class="card">
     <div class="card-header">💰 Resumo Financeiro</div>
     <div class="card-body">
@@ -268,6 +290,7 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     </div>
   </div>
 
+  <!-- OBSERVAÇÕES GERAIS -->
   <div class="card">
     <div class="card-header">📝 Observações Gerais</div>
     <div class="card-body">
@@ -278,13 +301,15 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     </div>
   </div>
 
+  <!-- AÇÕES -->
   <div class="actions">
     <button class="btn-secondary" onclick="limparForm()">✖ Limpar</button>
-    <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">📄 Gerar PDF do Orçamento</button>
+    <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">📄 Gerar PDF + Salvar Dados</button>
   </div>
 
 </div>
 
+<!-- PAGINA OCULTA PARA PDF -->
 <div id="pdfPage">
   <div class="pdf-header">
     <div>
@@ -414,7 +439,7 @@ function showToast(msg, isError){
   setTimeout(function(){el.className='';},3500);
 }
 
-// ── SERVIÇOS / PRODUTOS PADRÃO (DO PDF) ──────────────────────────────────────
+// ── SERVIÇOS / PRODUTOS PADRÃO ──────────────────────────────────────────────
 var servicos=[
   {
     desc:"Aplicação de Herbicida",
@@ -487,6 +512,95 @@ function atualizarTotais(){
 }
 
 function atualizar(){atualizarTotais();}
+
+// ── IMPORTAR DADOS (LOGICA SOLICITADA) ───────────────────────────────────────
+function importarOrcamento(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      
+      // Mapeia de volta para os campos da tela
+      document.getElementById("numOrc").value = data.numOrc || "";
+      document.getElementById("dataEmissao").value = data.dataEmissao || "";
+      document.getElementById("dataValidade").value = data.dataValidade || "";
+      document.getElementById("respTec").value = data.respTec || "";
+      document.getElementById("respCrea").value = data.respCrea || "";
+      document.getElementById("periodoExec").value = data.periodoExec || "";
+      
+      document.getElementById("cliNome").value = data.cliNome || "";
+      document.getElementById("cliCnpj").value = data.cliCnpj || "";
+      document.getElementById("cliEnd").value = data.cliEnd || "";
+      document.getElementById("cliMun").value = data.cliMun || "";
+      document.getElementById("cliTel").value = data.cliTel || "";
+      
+      document.getElementById("aeronave").value = data.aeronave || "";
+      document.getElementById("piloto").value = data.piloto || "";
+      document.getElementById("dificuldade").value = data.dificuldade || "Alta";
+      document.getElementById("condicoesOp").value = data.condicoesOp || "";
+      
+      document.getElementById("deslocKm").value = data.deslocKm || 0;
+      document.getElementById("vlrKm").value = data.vlrKm || 0;
+      document.getElementById("vlrOutros").value = data.vlrOutros || 0;
+      
+      document.getElementById("formaPgto").value = data.formaPgto || "";
+      document.getElementById("chavePix").value = data.chavePix || "";
+      document.getElementById("obsPgto").value = data.obsPgto || "";
+      document.getElementById("obsGeral").value = data.obsGeral || "";
+      
+      if (Array.isArray(data.servicos)) {
+        servicos = data.servicos;
+      }
+      
+      renderServicos();
+      showToast("✅ Dados do orçamento carregados com sucesso!");
+    } catch (err) {
+      console.error(err);
+      showToast("❌ Arquivo inválido ou corrompido.", true);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── EXPORTAR DADOS (ACOMPANHA O PDF) ─────────────────────────────────────────
+function salvarDadosBackup() {
+  var dados = {
+    numOrc: v("numOrc"),
+    dataEmissao: v("dataEmissao"),
+    dataValidade: v("dataValidade"),
+    respTec: v("respTec"),
+    respCrea: v("respCrea"),
+    periodoExec: v("periodoExec"),
+    cliNome: v("cliNome"),
+    cliCnpj: v("cliCnpj"),
+    cliEnd: v("cliEnd"),
+    cliMun: v("cliMun"),
+    cliTel: v("cliTel"),
+    aeronave: v("aeronave"),
+    piloto: v("piloto"),
+    dificuldade: v("dificuldade"),
+    condicoesOp: v("condicoesOp"),
+    deslocKm: parseFloat(v("deslocKm")) || 0,
+    vlrKm: parseFloat(v("vlrKm")) || 0,
+    vlrOutros: parseFloat(v("vlrOutros")) || 0,
+    formaPgto: v("formaPgto"),
+    chavePix: v("chavePix"),
+    obsPgto: v("obsPgto"),
+    obsGeral: v("obsGeral"),
+    servicos: servicos
+  };
+
+  var blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "Dados_Orcamento_" + v("numOrc").replace(/[^a-zA-Z0-9]/g, "_") + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
 // ── POPULAR PDF ───────────────────────────────────────────────────────────────
 function popularPDF(){
@@ -562,7 +676,7 @@ function popularPDF(){
 async function gerarPDF(){
   var btn=document.getElementById("btnGerar");
   btn.disabled=true;
-  btn.textContent="⏳ Gerando PDF...";
+  btn.textContent="⏳ Gerando PDF e Arquivo...";
 
   try {
     popularPDF();
@@ -621,7 +735,11 @@ async function gerarPDF(){
 
     var nomeArq="Orcamento_AgroVoo_"+(v("numOrc").replace(/[^a-zA-Z0-9]/g,"_"))+".pdf";
     doc.save(nomeArq);
-    showToast("✅ PDF salvo com sucesso: "+nomeArq);
+    
+    // EXPORTA TAMBÉM O ARQUIVO DE DADOS JUNTO COM O PDF!
+    salvarDadosBackup();
+    
+    showToast("✅ PDF e Arquivo de Dados (.json) baixados com sucesso!");
 
   } catch(err) {
     console.error("Erro ao gerar PDF:", err);
@@ -629,7 +747,7 @@ async function gerarPDF(){
     document.getElementById("pdfPage").style.left="-9999px";
   } finally {
     btn.disabled=false;
-    btn.innerHTML="📄 Gerar PDF do Orçamento";
+    btn.innerHTML="📄 Gerar PDF + Salvar Dados";
   }
 }
 
