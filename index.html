@@ -31,7 +31,7 @@ input[type=text],input[type=number],input[type=date],select,textarea{width:100%;
 input:focus,select:focus,textarea:focus{border-color:#166534;box-shadow:0 0 0 3px rgba(22,101,52,.1);background:white;}
 textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .input-prefix{position:relative;}
-.input-prefix span{position:absolute;left:11px;top:50%;transform:translateY(-50%;font-size:13px;color:#888;font-weight:600;}
+.input-prefix span{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:#888;font-weight:600;}
 .input-prefix input{padding-left:26px;}
 
 .srv-table{width:100%;border-collapse:collapse;font-size:12px;}
@@ -167,21 +167,21 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
       <div class="form-grid form-grid-2" style="margin-bottom:14px;">
         <div>
           <label>Nome / Razão Social</label>
-          <input type="text" id="cliNome" value="" placeholder="Carregue o PDF..." oninput="atualizar()">
+          <input type="text" id="cliNome" value="" placeholder="Aguardando PDF..." oninput="atualizar()">
         </div>
         <div>
           <label>CNPJ / CPF</label>
-          <input type="text" id="cliCnpj" value="" placeholder="Carregue o PDF..." oninput="atualizar()">
+          <input type="text" id="cliCnpj" value="" placeholder="Aguardando PDF..." oninput="atualizar()">
         </div>
       </div>
       <div class="form-grid form-grid-3">
         <div>
           <label>Endereço / Propriedade</label>
-          <input type="text" id="cliEnd" value="" placeholder="Carregue o PDF..." oninput="atualizar()">
+          <input type="text" id="cliEnd" value="" placeholder="Aguardando PDF..." oninput="atualizar()">
         </div>
         <div>
           <label>Município / UF</label>
-          <input type="text" id="cliMun" value="" placeholder="Carregue o PDF..." oninput="atualizar()">
+          <input type="text" id="cliMun" value="" placeholder="Aguardando PDF..." oninput="atualizar()">
         </div>
         <div>
           <label>Telefone / E-mail</label>
@@ -303,14 +303,13 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
   <!-- AÇÕES -->
   <div class="actions">
     <button class="btn-secondary" onclick="limparForm()">✖ Limpar</button>
-    <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">📄 Gerar PDF do Orçamento</button>
+    <button class="btn-primary" id="btnGerar" onclick="generarPDF()">📄 Gerar PDF do Orçamento</button>
   </div>
 
 </div>
 
 <!-- PAGINA OCULTA PARA PDF -->
 <div id="pdfPage">
-  <!-- (Código estrutural interno da folha A4 mantido sem alterações para preservar o visual idêntico) -->
   <div class="pdf-header">
     <div>
       <div class="pdf-logo">AGROVOO</div>
@@ -489,38 +488,37 @@ async function processarPdfOrcamento(event) {
   reader.readAsArrayBuffer(file);
 }
 
-// ── SISTEMA DE INTELLIGENT PARSING ATUALIZADO (100% À PROVA DE FALHAS) ──
+// ── ENGINE REGEX CORRIGIDA (BUSCA INSENSÍVEL A MAIÚSCULAS/MINÚSCULAS) ──
 function analisarTextoLimpoPDF(textoBruto) {
-  // Padronização do texto eliminando quebras falsas e caracteres especiais invisíveis do PDF
+  // Padronização do texto eliminando quebras falsas e traços duplicados
   var textoLimpo = textoBruto.replace(/\|/g, " ");
   textoLimpo = textoLimpo.replace(/[ ]+/g, " ");
   
-  // Cria uma versão em array de linhas limpas para buscas sequenciais
   var linhasArray = textoBruto.split("\n").map(l => l.replace(/\|/g, "").trim()).filter(l => l.length > 0);
 
-  // Função helper interna para obter valores entre termos sem quebrar por espaçamento flutuante
+  // Helper corrigido para buscar campos ignorando maiúsculas/minúsculas de forma precisa
   function buscarCampo(termoInicio, termosFim, escopoTexto) {
     var regex = new RegExp(termoInicio + "\\s*([\\s\\S]*?)(?=" + termosFim.join("|") + "|$)", "i");
     var match = escopoTexto.match(regex);
     return match ? match[1].replace(/\n/g, " ").replace(/\s+/g, " ").trim() : "";
   }
 
-  // 1. Extração Isolada da Seção de Dados do Cliente
+  // 1. Extração Isolada da Seção de Dados do Cliente (Case-Insensitive)
   var secaoCliente = buscarCampo("DADOS DO CLIENTE", ["IDENTIFICAÇÃO"], textoLimpo);
   var cliNome = buscarCampo("Cliente:", ["CNPJ/CPF:"], secaoCliente);
   var cliCnpj = buscarCampo("CNPJ/CPF:", ["Endereço:"], secaoCliente);
   var cliEnd  = buscarCampo("Endereço:", ["Município:"], secaoCliente);
   var cliMun  = buscarCampo("Município:", ["Contato:", "IDENTIFICAÇÃO"], secaoCliente);
 
-  // Aplica os valores limpos na tela
-  document.getElementById("cliNome").value = cliNome;
-  document.getElementById("cliCnpj").value = cliCnpj;
-  document.getElementById("cliEnd").value = cliEnd;
-  document.getElementById("cliMun").value = cliMun;
+  // Força o preenchimento direto dos valores nos inputs da interface
+  document.getElementById("cliNome").value = cliNome || "Não Identificado";
+  document.getElementById("cliCnpj").value = cliCnpj || "";
+  document.getElementById("cliEnd").value = cliEnd || "";
+  document.getElementById("cliMun").value = cliMun || "";
 
   // 2. Extração Isolada da Seção de Identificação
   var secaoId = buscarCampo("IDENTIFICAÇÃO", ["SERVIÇOS", "Serviço", "Cultura"], textoLimpo);
-  var numOrc = buscarCampo("N(?:º|°)\\s*Orçamento:", ["Emissão:"], secaoId);
+  var numOrc = buscarCampo("N(?:º|°|o)\\s*Orçamento:", ["Emissão:"], secaoId);
   var emissao = buscarCampo("Emissão:", ["Válido até:"], secaoId);
   var validade = buscarCampo("Válido até:", ["Resp. Técnico:", "Resp."], secaoId);
   var respTec = buscarCampo("Resp. Técnico:", ["Período", "CREA"], secaoId);
@@ -538,7 +536,7 @@ function analisarTextoLimpoPDF(textoBruto) {
   var condicoesOp = buscarCampo("Condições:", ["ATENÇÃO:", "RESUMO"], textoLimpo);
 
   if (aeronave) document.getElementById("aeronave").value = aeronave;
-  if (piloto) document.getElementById("piloto").value = piloto;
+  if (piloto)   document.getElementById("piloto").value = piloto;
   if (condicoesOp) document.getElementById("condicoesOp").value = condicoesOp;
 
   // 4. Varredura e Reconstrução Avançada da Tabela de Itens (Sem limite de linhas)
@@ -546,12 +544,10 @@ function analisarTextoLimpoPDF(textoBruto) {
   for (var i = 0; i < linhasArray.length; i++) {
     var linha = linhasArray[i];
     
-    // Identifica a célula com a unidade de medida do item (Ex: ha, kg, It)
-    if (linha.match(/^(ha|kg|It|litros|lt)$/i) || (linhasArray[i+1] && linha === "" && linhasArray[i+1].match(/^(ha|kg|It|litros|lt)$/i))) {
-      var cultura = linha.match(/^(ha|kg|It|litros|lt)$/i) ? linha : linhasArray[i+1];
-      var idxReferencia = linha.match(/^(ha|kg|It|litros|lt)$/i) ? i : i + 1;
+    if (linha.match(/^(ha|kg|It|litros|lt|ka|wg)$/i) || (linhasArray[i+1] && linha === "" && linhasArray[i+1].match(/^(ha|kg|It|litros|lt|ka|wg)$/i))) {
+      var cultura = linha.match(/^(ha|kg|It|litros|lt|ka|wg)$/i) ? linha : linhasArray[i+1];
+      var idxReferencia = linha.match(/^(ha|kg|It|litros|lt|ka|wg)$/i) ? i : i + 1;
 
-      // Sobe encontrando o primeiro bloco de texto válido que serve de Descrição/Nome do item
       var desc = "";
       var p = idxReferencia - 1;
       while (p >= 0) {
@@ -566,7 +562,6 @@ function analisarTextoLimpoPDF(textoBruto) {
         p--;
       }
 
-      // Desce minerando os numéricos correspondentes àquela linha (Qtd, Valor/ha)
       var scan = idxReferencia + 1;
       var valoresColetados = [];
       var obs = "Produto/Serviço";
@@ -592,7 +587,6 @@ function analisarTextoLimpoPDF(textoBruto) {
         obs: obs
       });
       
-      // Salta o ponteiro para evitar duplicidade de leitura do mesmo bloco
       i = scan - 1;
     }
   }
@@ -602,7 +596,7 @@ function analisarTextoLimpoPDF(textoBruto) {
   }
   
   renderServicos();
-  showToast("✅ Importação bem-sucedida! Município de " + (cliMun || "Lins/Assis") + " e todos os " + servicos.length + " itens carregados.");
+  showToast("✅ Importação completa concluída com sucesso!");
 }
 
 // ── COMPILAÇÃO FINAL E EMISSÃO DO PDF REVISADO ──
@@ -759,7 +753,7 @@ function limparForm(){
   renderServicos();
 }
 
-// Inicializa a tabela padrão estruturada do seu modelo principal de 3 itens
+// Inicialização com os dados do modelo padrão
 servicos = [
   { desc:"Aplicação de Herbicida", cultura:"Área urbana / lotes", ha:28, vlrHa:330, obs:"Matar ervas daninhas (mato)." },
   { desc:"Glifosato 720 Soldier", cultura:"kg", ha:40, vlrHa:35, obs:"Produto" },
