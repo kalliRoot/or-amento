@@ -17,7 +17,7 @@ body{font-family:"Inter",Arial,sans-serif;background:#f1f5f1;}
 .nav-sub{font-size:9px;color:#bbf7d0;letter-spacing:1.5px;margin-top:1px;}
 .nav-badge{background:#bbf7d0;color:#166534;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
 
-.container{max-width:900px;margin:0 auto;padding:28px 16px 60px;}
+.container{max-width:950px;margin:0 auto;padding:28px 16px 60px;}
 .card{background:white;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.08);margin-bottom:20px;overflow:hidden;}
 .card-header{background:#166534;color:white;padding:12px 20px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
 .card-body{padding:20px;}
@@ -76,7 +76,6 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .pdf-sec{background:#166534;color:white;padding:5px 10px;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:0;margin-top:10px;}
 .pdf-box{border:1px solid #d1fae5;border-top:none;padding:8px 10px;background:#f9fafb;margin-bottom:6px;font-size:10.5px;}
 .pdf-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.pdf-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .pdf-row{display:flex;border-bottom:1px solid #e5e7eb;min-height:20px;align-items:center;font-size:10.5px;}
 .pdf-row:last-child{border-bottom:none;}
 .pdf-lbl{font-weight:700;color:#166534;width:120px;min-width:120px;font-size:10px;}
@@ -100,7 +99,6 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
 <div id="toast"></div>
 
-<!-- NAV -->
 <div class="nav">
   <div>
     <div class="nav-logo">AGROVOO</div>
@@ -111,45 +109,47 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
 <div class="container">
 
-  <!-- NUMERO / DATA -->
   <div class="card">
     <div class="card-header">📋 Identificação do Orçamento</div>
     <div class="card-body">
       <div class="form-grid form-grid-3">
         <div>
           <label>N° do Orçamento</label>
-          <input type="text" id="numOrc" value="ORC-2025-001" oninput="atualizar()">
+          <input type="text" id="numOrc" value="ORC-2026-245" oninput="atualizar()">
         </div>
         <div>
           <label>Data de Emissão</label>
-          <input type="date" id="dataEmissao" oninput="atualizar()">
+          <input type="date" id="dataEmissao" value="2026-06-02" oninput="atualizar()">
         </div>
         <div>
           <label>Válido até</label>
-          <input type="date" id="dataValidade" oninput="atualizar()">
+          <input type="date" id="dataValidade" value="2026-06-17" oninput="atualizar()">
         </div>
       </div>
-      <div class="form-grid form-grid-2" style="margin-top:14px;">
+      <div class="form-grid form-grid-3" style="margin-top:14px;">
         <div>
           <label>Responsável Técnico</label>
           <input type="text" id="respTec" value="Jéssica Dadalt" oninput="atualizar()">
         </div>
         <div>
           <label>CREA do Responsável</label>
-          <input type="text" id="respCrea" value="5071099466-SP" oninput="atualizar()" placeholder="Ex: 5071099466-SP">
+          <input type="text" id="respCrea" value="5071099466-SP" oninput="atualizar()">
+        </div>
+        <div>
+          <label>Período previsto de execução</label>
+          <input type="text" id="periodoExec" value="2 à 3 dias" oninput="atualizar()">
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CLIENTE -->
   <div class="card">
     <div class="card-header">👤 Dados do Cliente</div>
     <div class="card-body">
       <div class="form-grid form-grid-2" style="margin-bottom:14px;">
         <div>
           <label>Nome / Razão Social</label>
-          <input type="text" id="cliNome" value="Guilherme Henrique de Freitas Meirelles" oninput="atualizar()">
+          <input type="text" id="cliNome" value="PACAEMBU ASSIS BELA VISTA III 445-EMPREENDIMENTO IMOBILIÁRIO LTDA" oninput="atualizar()">
         </div>
         <div>
           <label>CNPJ / CPF</label>
@@ -163,46 +163,44 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
         </div>
         <div>
           <label>Município / UF</label>
-          <input type="text" id="cliMun" value="Assis – SP" oninput="atualizar()">
+          <input type="text" id="cliMun" value="Assis - SP" oninput="atualizar()">
         </div>
         <div>
           <label>Telefone / E-mail</label>
-          <input type="text" id="cliTel" value="" placeholder="(18) 9..." oninput="atualizar()">
+          <input type="text" id="cliTel" value="" placeholder="—" oninput="atualizar()">
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SERVIÇOS -->
   <div class="card">
     <div class="card-header">🚀 Serviços / Itens do Orçamento</div>
     <div class="card-body">
       <table class="srv-table" id="srvTable">
         <thead>
           <tr>
-            <th style="width:22%">Serviço / Descrição</th>
-            <th style="width:14%">Cultura</th>
-            <th style="width:10%">Área (ha)</th>
-            <th style="width:12%">Valor / ha (R$)</th>
-            <th style="width:13%">Total (R$)</th>
-            <th style="width:22%">Observação</th>
-            <th style="width:7%"></th>
+            <th style="width:25%">Serviço / Descrição</th>
+            <th style="width:15%">Cultura / Unid</th>
+            <th style="width:12%">Qtd (ha / kg)</th>
+            <th style="width:14%">Valor Unit. (R$)</th>
+            <th style="width:14%">Total (R$)</th>
+            <th style="width:20%">Observação</th>
+            <th style="width:5%"></th>
           </tr>
         </thead>
         <tbody id="srvBody"></tbody>
       </table>
-      <button class="btn-row-add" onclick="addServico()">+ Adicionar Serviço</button>
+      <button class="btn-row-add" onclick="addServico()">+ Adicionar Serviço/Produto</button>
     </div>
   </div>
 
-  <!-- CONDIÇÕES OPERACIONAIS -->
   <div class="card">
     <div class="card-header">✈ Condições Operacionais</div>
     <div class="card-body">
       <div class="form-grid form-grid-3" style="margin-bottom:14px;">
         <div>
           <label>Aeronave</label>
-          <input type="text" id="aeronave" value="Agas T40" oninput="atualizar()">
+          <input type="text" id="aeronave" value="EAV 30XP" oninput="atualizar()">
         </div>
         <div>
           <label>Piloto</label>
@@ -217,33 +215,26 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
           </select>
         </div>
       </div>
-      <div class="form-grid form-grid-2">
+      <div class="form-grid">
         <div>
           <label>Descrição das condições / obstáculos</label>
           <textarea id="condicoesOp" rows="3" oninput="atualizar()">Aplicação sobre área urbana com casas construídas. Presença de muitos obstáculos (edificações, fiações e estruturas). Voo em baixa altitude com manobras de precisão. Exige piloto habilitado para voo em ambiente complexo.</textarea>
-        </div>
-        <div>
-          <label>Período previsto de execução</label>
-          <input type="text" id="periodoExec" value="A combinar" placeholder="Ex: julho/2025" oninput="atualizar()" style="margin-bottom:10px;">
-          <label>Deslocamento (km)</label>
-          <input type="number" id="deslocKm" value="0" min="0" oninput="atualizar()">
         </div>
       </div>
     </div>
   </div>
 
-  <!-- RESUMO FINANCEIRO -->
   <div class="card">
     <div class="card-header">💰 Resumo Financeiro</div>
     <div class="card-body">
       <div class="form-grid form-grid-2">
         <div class="totals-box">
           <div class="totals-row">
-            <span class="totals-label">Subtotal serviços</span>
+            <span class="totals-label">Subtotal itens/serviços</span>
             <span class="totals-value" id="subtotalSrv">R$ 0,00</span>
           </div>
           <div class="totals-row">
-            <span class="totals-label">Deslocamento (<span id="kmLabel">0</span> km × R$ <input type="number" id="vlrKm" value="3" min="0" style="width:50px;padding:2px 6px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="atualizar()"> /km)</span>
+            <span class="totals-label">Deslocamento (<input type="number" id="deslocKm" value="0" min="0" style="width:55px;padding:2px 4px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="atualizar()"> km × R$ <input type="number" id="vlrKm" value="0" min="0" style="width:50px;padding:2px 4px;font-size:12px;border:1px solid #d1fae5;border-radius:4px;" oninput="atualizar()"> /km)</span>
             <span class="totals-value" id="subtotalDesl">R$ 0,00</span>
           </div>
           <div class="totals-row">
@@ -261,7 +252,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
         <div>
           <label>Forma de Pagamento</label>
           <select id="formaPgto" style="margin-bottom:12px;" onchange="atualizar()">
-            <option>Após término do serviço — PIX</option>
+            <option>Após término do serviço - PIX</option>
             <option>50% antecipado + 50% após serviço</option>
             <option>Parcelado (combinar)</option>
             <option>Boleto bancário</option>
@@ -270,33 +261,30 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
           <label>Chave PIX (CNPJ)</label>
           <input type="text" id="chavePix" value="62.688.987/0001-36" oninput="atualizar()" style="margin-bottom:12px;">
           <label>Observações sobre pagamento</label>
-          <textarea id="obsPgto" rows="2" oninput="atualizar()">Pagamento via PIX — CNPJ 62.688.987/0001-36
+          <textarea id="obsPgto" rows="2" oninput="atualizar()">Pagamento via PIX-CNPJ 62.688.987/0001-36
 Favorecido: AgroVoo Tecnologia Agrícola</textarea>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- OBSERVAÇÕES GERAIS -->
   <div class="card">
     <div class="card-header">📝 Observações Gerais</div>
     <div class="card-body">
-      <textarea id="obsGeral" rows="4" oninput="atualizar()" placeholder="Condições climáticas mínimas, responsabilidades, prazo de validade do orçamento...">- Este orçamento tem validade de 15 dias a partir da data de emissão.
+      <textarea id="obsGeral" rows="4" oninput="atualizar()">- Este orçamento tem validade de 15 dias a partir da data de emissão.
 - A execução do serviço está condicionada às condições climáticas adequadas (vento ≤ 10 km/h, sem chuva).
 - Os produtos fitossanitários utilizados são de responsabilidade do contratante.
 - A AgroVoo se reserva o direito de reagendar o serviço em caso de condições adversas.</textarea>
     </div>
   </div>
 
-  <!-- AÇÕES -->
   <div class="actions">
     <button class="btn-secondary" onclick="limparForm()">✖ Limpar</button>
     <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">📄 Gerar PDF do Orçamento</button>
   </div>
 
-</div><!-- fim container -->
+</div>
 
-<!-- PAGINA OCULTA PARA PDF -->
 <div id="pdfPage">
   <div class="pdf-header">
     <div>
@@ -305,7 +293,7 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     </div>
     <div class="pdf-title">
       <h1>ORÇAMENTO</h1>
-      <p id="pdf-num-label">N° ORC-2025-001</p>
+      <p id="pdf-num-label">N° ORC-2026-245</p>
     </div>
     <div class="pdf-contact">
       Rua Tiradentes, 2080 – Assis – SP<br>
@@ -343,9 +331,9 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     <thead>
       <tr>
         <th>Serviço / Descrição</th>
-        <th>Cultura</th>
-        <th style="text-align:center;">Área (ha)</th>
-        <th style="text-align:right;">Valor/ha</th>
+        <th>Cultura / Unid</th>
+        <th style="text-align:center;">Qtd</th>
+        <th style="text-align:right;">Valor Unit.</th>
         <th style="text-align:right;">Total</th>
         <th>Observação</th>
       </tr>
@@ -410,11 +398,11 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
     Rua Tiradentes, 2080 – Assis – SP &nbsp;|&nbsp; agrovoo.tec.br &nbsp;|&nbsp; contato@agrovoo.tec.br &nbsp;|&nbsp; (18) 99706-9421<br>
     CNPJ: 62.688.987/0001-36 &nbsp;|&nbsp; Registro MAPA: SP 009116-2
   </div>
-</div><!-- fim pdfPage -->
+</div>
 
 <script>
 // ── HELPERS ──────────────────────────────────────────────────────────────────
-function fmt(v){return'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmt(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtDate(s){if(!s)return'—';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 function v(id){return(document.getElementById(id)||{}).value||'';}
 function t(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
@@ -426,24 +414,23 @@ function showToast(msg, isError){
   setTimeout(function(){el.className='';},3500);
 }
 
-// ── INICIALIZA DATAS ─────────────────────────────────────────────────────────
-(function(){
-  var hoje=new Date();
-  var validade=new Date();
-  validade.setDate(hoje.getDate()+15);
-  function toInput(d){return d.toISOString().split("T")[0];}
-  document.getElementById("dataEmissao").value=toInput(hoje);
-  document.getElementById("dataValidade").value=toInput(validade);
-})();
-
-// ── SERVIÇOS ─────────────────────────────────────────────────────────────────
-var servicos=[{
-  desc:"Aplicação de Herbicida",
-  cultura:"Área urbana / lotes",
-  ha:30,
-  vlrHa:200,
-  obs:"Matar ervas daninhas (mato). Voo sobre casas construídas com muitos obstáculos."
-}];
+// ── SERVIÇOS / PRODUTOS PADRÃO (DO PDF) ──────────────────────────────────────
+var servicos=[
+  {
+    desc:"Aplicação de Herbicida",
+    cultura:"Área urbana / lotes",
+    ha:28,
+    vlrHa:330,
+    obs:"Matar ervas daninhas (mato). Voo sobre casas construídas com muitos obstáculos."
+  },
+  {
+    desc:"Glifosato 720 Soldier",
+    cultura:"kg",
+    ha:40,
+    vlrHa:35,
+    obs:"Produto"
+  }
+];
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -457,7 +444,7 @@ function renderServicos(){
       "<td><input type=\"text\" value=\""+esc(s.desc)+"\" onchange=\"servicos["+i+"].desc=this.value;atualizar()\"></td>"+
       "<td><input type=\"text\" value=\""+esc(s.cultura)+"\" onchange=\"servicos["+i+"].cultura=this.value;atualizar()\"></td>"+
       "<td><input type=\"number\" value=\""+s.ha+"\" min=\"0\" step=\"0.1\" onchange=\"servicos["+i+"].ha=this.value;atualizar()\"></td>"+
-      "<td><input type=\"number\" value=\""+s.vlrHa+"\" min=\"0\" onchange=\"servicos["+i+"].vlrHa=this.value;atualizar()\"></td>"+
+      "<td><input type=\"number\" value=\""+s.vlrHa+"\" min=\"0\" step=\"0.01\" onchange=\"servicos["+i+"].vlrHa=this.value;atualizar()\"></td>"+
       "<td style=\"font-weight:600;color:#166534;text-align:right;\">"+fmt(total)+"</td>"+
       "<td><input type=\"text\" value=\""+esc(s.obs)+"\" onchange=\"servicos["+i+"].obs=this.value;atualizar()\"></td>"+
       "<td style=\"text-align:center;\"><button class=\"btn-row-del\" onclick=\"delServico("+i+")\" "+(servicos.length<=1?"disabled":"")+">&#215;</button></td>";
@@ -477,7 +464,7 @@ function delServico(i){
   renderServicos();
 }
 
-// ── CALCULOS ─────────────────────────────────────────────────────────────────
+// ── CÁLCULOS AUTOMÁTICOS ─────────────────────────────────────────────────────
 function atualizarTotais(){
   var subSrv=servicos.reduce(function(acc,s){return acc+(parseFloat(s.ha)||0)*(parseFloat(s.vlrHa)||0);},0);
   var km=parseFloat(v("deslocKm"))||0;
@@ -485,11 +472,11 @@ function atualizarTotais(){
   var desl=km*vlrKm;
   var outros=parseFloat(document.getElementById("vlrOutros").value)||0;
   var total=subSrv+desl+outros;
+  
   document.getElementById("subtotalSrv").textContent=fmt(subSrv);
   document.getElementById("subtotalDesl").textContent=fmt(desl);
   document.getElementById("totalGeral").textContent=fmt(total);
-  document.getElementById("kmLabel").textContent=km;
-  // Atualiza totais na tabela sem re-render completo
+  
   var rows=document.querySelectorAll("#srvBody tr");
   rows.forEach(function(tr,i){
     if(servicos[i]){
@@ -546,7 +533,6 @@ function popularPDF(){
   t("pdf-sig-resp",v("respTec"));
   t("pdf-sig-resp-crea",v("respCrea")?"CREA: "+v("respCrea"):"");
 
-  // Tabela de serviços no PDF
   var pdfTb=document.getElementById("pdf-srv-body");
   pdfTb.innerHTML="";
   servicos.forEach(function(s){
@@ -555,14 +541,13 @@ function popularPDF(){
     tr.innerHTML=
       "<td>"+esc(s.desc)+"</td>"+
       "<td>"+esc(s.cultura)+"</td>"+
-      "<td style=\"text-align:center;\">"+s.ha+" ha</td>"+
+      "<td style=\"text-align:center;\">"+s.ha+"</td>"+
       "<td style=\"text-align:right;\">"+fmt(s.vlrHa)+"</td>"+
       "<td style=\"text-align:right;font-weight:700;\">"+fmt(tot)+"</td>"+
       "<td style=\"font-size:9px;\">"+esc(s.obs)+"</td>";
     pdfTb.appendChild(tr);
   });
 
-  // Linha total
   var trTot=document.createElement("tr");
   trTot.style.background="#f0fdf4";
   trTot.style.fontWeight="700";
@@ -583,13 +568,11 @@ async function gerarPDF(){
     popularPDF();
 
     var page=document.getElementById("pdfPage");
-    // Torna visível temporariamente para renderização
     page.style.left="0px";
     page.style.position="absolute";
     page.style.top="0px";
     page.style.zIndex="-1";
 
-    // Aguarda renderização
     await new Promise(function(r){setTimeout(r,300);});
 
     var canvas=await html2canvas(page,{
@@ -603,7 +586,6 @@ async function gerarPDF(){
       windowHeight:page.offsetHeight
     });
 
-    // Volta à posição oculta
     page.style.left="-9999px";
 
     var imgData=canvas.toDataURL("image/jpeg",0.95);
@@ -611,17 +593,14 @@ async function gerarPDF(){
     var pw=doc.internal.pageSize.getWidth();
     var ph=doc.internal.pageSize.getHeight();
 
-    // Calcula a altura proporcional da imagem em mm
     var imgW=canvas.width;
     var imgH=canvas.height;
     var ratio=imgH/imgW;
     var pdfImgH=pw*ratio;
 
     if(pdfImgH<=ph){
-      // Cabe em uma página
       doc.addImage(imgData,"JPEG",0,0,pw,pdfImgH);
     } else {
-      // Divide em múltiplas páginas
       var pageHeightPx=Math.floor(imgW*(ph/pw));
       var y=0;
       var pageNum=0;
@@ -657,7 +636,7 @@ async function gerarPDF(){
 // ── LIMPAR ────────────────────────────────────────────────────────────────────
 function limparForm(){
   if(!confirm("Deseja limpar todos os campos do formulário?")) return;
-  document.getElementById("numOrc").value="ORC-2025-001";
+  document.getElementById("numOrc").value="ORC-2026-245";
   document.getElementById("respTec").value="";
   document.getElementById("respCrea").value="";
   document.getElementById("cliNome").value="";
@@ -670,6 +649,7 @@ function limparForm(){
   document.getElementById("condicoesOp").value="";
   document.getElementById("periodoExec").value="";
   document.getElementById("deslocKm").value="0";
+  document.getElementById("vlrKm").value="0";
   document.getElementById("vlrOutros").value="0";
   document.getElementById("obsGeral").value="";
   document.getElementById("obsPgto").value="";
