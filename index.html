@@ -114,7 +114,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     <div class="card-body flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
       <div>
         <h3 class="font-bold text-emerald-800 text-sm uppercase tracking-wider">📂 Importar e Reajustar Qualquer Orçamento (PDF)</h3>
-        <p class="text-xs text-emerald-700 mt-1">Carregue qualquer orçamento em PDF neste estilo. O sistema preencherá os dados do cliente e tabelas automaticamente.</p>
+        <p class="text-xs text-emerald-700 mt-1">Carregue o arquivo PDF do orçamento original. Os dados do cliente e todos os itens serão extraídos na hora.</p>
       </div>
       <div>
         <label class="btn-secondary text-xs cursor-pointer inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-emerald-700 font-bold hover:bg-emerald-50 text-emerald-800">
@@ -488,41 +488,57 @@ async function processarPdfOrcamento(event) {
   reader.readAsArrayBuffer(file);
 }
 
-// ── ENGINE REGEX CORRIGIDA (BUSCA INSENSÍVEL A MAIÚSCULAS/MINÚSCULAS) ──
+// ── NOVA LOGICA IMPREVISTO-PROOFS DE VARREDURA SEQUENCIAL LINHA POR LINHA ──
 function analisarTextoLimpoPDF(textoBruto) {
-  // Padronização do texto eliminando quebras falsas e traços duplicados
-  var textoLimpo = textoBruto.replace(/\|/g, " ");
-  textoLimpo = textoLimpo.replace(/[ ]+/g, " ");
-  
-  var linhasArray = textoBruto.split("\n").map(l => l.replace(/\|/g, "").trim()).filter(l => l.length > 0);
+  // Gera array limpando as barras verticais e espaços extras de cada elemento do fluxo do PDF
+  var linhas = textoBruto.split("\n").map(l => l.replace(/\|/g, "").trim()).filter(l => l.length > 0);
 
-  // Helper corrigido para buscar campos ignorando maiúsculas/minúsculas de forma precisa
-  function buscarCampo(termoInicio, termosFim, escopoTexto) {
-    var regex = new RegExp(termoInicio + "\\s*([\\s\\S]*?)(?=" + termosFim.join("|") + "|$)", "i");
-    var match = escopoTexto.match(regex);
-    return match ? match[1].replace(/\n/g, " ").replace(/\s+/g, " ").trim() : "";
+  // Função interna robusta para capturar o conteúdo pulando linhas fantasmas até encontrar a próxima tag
+  function obterTextoLinhas(marcadorInicio, marcosFim) {
+    var itensColetados = [];
+    var achouMarcador = false;
+    
+    for (var i = 0; i < linhas.length; i++) {
+      var linhaAtual = linhas[i].toLowerCase();
+      
+      if (!achouMarcador && linhaAtual.includes(marcadorInicio.toLowerCase())) {
+        achouMarcador = true;
+        continue;
+      }
+      
+      if (achouMarcador) {
+        var alcancouFim = false;
+        for (var j = 0; j < marcosFim.length; j++) {
+          if (linhaAtual.includes(marcosFim[j].toLowerCase())) {
+            alcancouFim = true;
+            break;
+          }
+        }
+        if (alcancouFim) break;
+        itensColetados.push(linhas[i]);
+      }
+    }
+    return itensColetados.join(" ").replace(/\s+/g, " ").trim();
   }
 
-  // 1. Extração Isolada da Seção de Dados do Cliente (Case-Insensitive)
-  var secaoCliente = buscarCampo("DADOS DO CLIENTE", ["IDENTIFICAÇÃO"], textoLimpo);
-  var cliNome = buscarCampo("Cliente:", ["CNPJ/CPF:"], secaoCliente);
-  var cliCnpj = buscarCampo("CNPJ/CPF:", ["Endereço:"], secaoCliente);
-  var cliEnd  = buscarCampo("Endereço:", ["Município:"], secaoCliente);
-  var cliMun  = buscarCampo("Município:", ["Contato:", "IDENTIFICAÇÃO"], secaoCliente);
+  // 1. Extração Segura de Dados de Clientes Independentemente da Ordem das Células
+  var cliNome = obterTextoLinhas("Cliente:", ["CNPJ/CPF:"]);
+  var cliCnpj = obterTextoLinhas("CNPJ/CPF:", ["Endereço:"]);
+  var cliEnd  = obterTextoLinhas("Endereço:", ["Município:"]);
+  var cliMun  = obterTextoLinhas("Município:", ["Contato:", "IDENTIFICAÇÃO"]);
 
-  // Força o preenchimento direto dos valores nos inputs da interface
+  // Alimenta diretamente os campos modificando os placeholders antigos
   document.getElementById("cliNome").value = cliNome || "Não Identificado";
   document.getElementById("cliCnpj").value = cliCnpj || "";
   document.getElementById("cliEnd").value = cliEnd || "";
   document.getElementById("cliMun").value = cliMun || "";
 
-  // 2. Extração Isolada da Seção de Identificação
-  var secaoId = buscarCampo("IDENTIFICAÇÃO", ["SERVIÇOS", "Serviço", "Cultura"], textoLimpo);
-  var numOrc = buscarCampo("N(?:º|°|o)\\s*Orçamento:", ["Emissão:"], secaoId);
-  var emissao = buscarCampo("Emissão:", ["Válido até:"], secaoId);
-  var validade = buscarCampo("Válido até:", ["Resp. Técnico:", "Resp."], secaoId);
-  var respTec = buscarCampo("Resp. Técnico:", ["Período", "CREA"], secaoId);
-  var periodoExec = buscarCampo("Período\\s*exe[cс]\\.:", ["SERVIÇOS", "\\n"], secaoId);
+  // 2. Extração de Identificação Geral
+  var numOrc = obterTextoLinhas("Nº Orçamento:", ["Emissão:"]) || obterTextoLinhas("N° Orçamento:", ["Emissão:"]);
+  var emissao = obterTextoLinhas("Emissão:", ["Válido até:"]);
+  var validade = obterTextoLinhas("Válido até:", ["Resp. Técnico:", "Resp."]);
+  var respTec = obterTextoLinhas("Resp. Técnico:", ["Período", "CREA"]);
+  var periodoExec = obterTextoLinhas("Período exe", ["SERVIÇOS", "Serviço"]);
 
   if (numOrc) document.getElementById("numOrc").value = numOrc;
   if (emissao) document.getElementById("dataEmissao").value = parseInputDate(emissao);
@@ -531,31 +547,33 @@ function analisarTextoLimpoPDF(textoBruto) {
   if (periodoExec) document.getElementById("periodoExec").value = periodoExec;
 
   // 3. Condições Operacionais
-  var aeronave = buscarCampo("Aeronave:", ["Piloto:"], textoLimpo);
-  var piloto = buscarCampo("Piloto:", ["Dificuldade:"], textoLimpo);
-  var condicoesOp = buscarCampo("Condições:", ["ATENÇÃO:", "RESUMO"], textoLimpo);
+  var aeronave = obterTextoLinhas("Aeronave:", ["Piloto:"]);
+  var piloto = obterTextoLinhas("Piloto:", ["Dificuldade:"]);
+  var condicoesOp = obterTextoLinhas("Condições:", ["ATENÇÃO:", "RESUMO"]);
 
   if (aeronave) document.getElementById("aeronave").value = aeronave;
   if (piloto)   document.getElementById("piloto").value = piloto;
   if (condicoesOp) document.getElementById("condicoesOp").value = condicoesOp;
 
-  // 4. Varredura e Reconstrução Avançada da Tabela de Itens (Sem limite de linhas)
+  // 4. Varredura Inteligente da Tabela de Serviços/Produtos (Captura N-itens perfeitamente)
   var capturados = [];
-  for (var i = 0; i < linhasArray.length; i++) {
-    var linha = linhasArray[i];
+  var linhasTabela = textoBruto.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+
+  for (var i = 0; i < linhasTabela.length; i++) {
+    var linha = linhasTabela[i];
     
-    if (linha.match(/^(ha|kg|It|litros|lt|ka|wg)$/i) || (linhasArray[i+1] && linha === "" && linhasArray[i+1].match(/^(ha|kg|It|litros|lt|ka|wg)$/i))) {
-      var cultura = linha.match(/^(ha|kg|It|litros|lt|ka|wg)$/i) ? linha : linhasArray[i+1];
-      var idxReferencia = linha.match(/^(ha|kg|It|litros|lt|ka|wg)$/i) ? i : i + 1;
+    if (linha === "|" && linhasTabela[i+1] && linhasTabela[i+1].match(/^(ha|kg|It|litros|lt|ka|wg)/i)) {
+      var cultura = linhasTabela[i+1].replace("|", "").trim();
+      var idxReferencia = i + 1;
 
       var desc = "";
       var p = idxReferencia - 1;
       while (p >= 0) {
-        var tP = linhasArray[p];
+        var tP = linhasTabela[p].replace("|", "").trim();
         if (tP.length > 0 && !tP.match(/Serviço|Cultura|Área|Valor|Total|Observação|DADOS|IDENTIFICAÇÃO/i) && isNaN(parseFloat(tP))) {
           desc = tP;
-          if (linhasArray[p-1] && isNaN(parseFloat(linhasArray[p-1])) && !linhasArray[p-1].match(/\|/)) {
-            desc = linhasArray[p-1] + " " + desc;
+          if (linhasTabela[p-1] && isNaN(parseFloat(linhasTabela[p-1].replace("|", ""))) && !linhasTabela[p-1].includes("|")) {
+            desc = linhasTabela[p-1].replace("|", "").trim() + " " + desc;
           }
           break;
         }
@@ -564,10 +582,10 @@ function analisarTextoLimpoPDF(textoBruto) {
 
       var scan = idxReferencia + 1;
       var valoresColetados = [];
-      var obs = "Produto/Serviço";
+      var obs = "Produto";
 
-      while (scan < linhasArray.length && valoresColetados.length < 3) {
-        var token = linhasArray[scan];
+      while (scan < linhasTabela.length && valoresColetados.length < 3) {
+        var token = linhasTabela[scan].replace("|", "").trim();
         if (token.includes("TOTAL DOS") || token.includes("CONDIÇÕES")) break;
         
         var numLimpo = token.replace("ha", "").replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
@@ -596,7 +614,7 @@ function analisarTextoLimpoPDF(textoBruto) {
   }
   
   renderServicos();
-  showToast("✅ Importação completa concluída com sucesso!");
+  showToast("✅ Todos os dados carregados e mapeados com sucesso!");
 }
 
 // ── COMPILAÇÃO FINAL E EMISSÃO DO PDF REVISADO ──
@@ -753,7 +771,7 @@ function limparForm(){
   renderServicos();
 }
 
-// Inicialização com os dados do modelo padrão
+// Inicialização com os dados do modelo padrão de 3 itens
 servicos = [
   { desc:"Aplicação de Herbicida", cultura:"Área urbana / lotes", ha:28, vlrHa:330, obs:"Matar ervas daninhas (mato)." },
   { desc:"Glifosato 720 Soldier", cultura:"kg", ha:40, vlrHa:35, obs:"Produto" },
