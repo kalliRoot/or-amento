@@ -1,10 +1,3 @@
-Entendido! Corrigi o código limpando os espaçamentos excessivos que deixaram o layout desorganizado (reduzindo a margem inferior exagerada de 200px para 40px) e refatorei o algoritmo de inteligência artificial local.
-
-O erro na captura do 3º item acontecia porque o PDF quebra as unidades de forma variada (como `lt` ou `kg`) antes de chegar à palavra "TOTAL DOS SERVIÇOS". Criei uma leitura baseada em **expressão regular unificada**. Agora, ele captura todas as linhas que contêm valores monetários e acha suas respectivas descrições e quantidades dinamicamente, processando 2, 3 ou quantos itens o PDF tiver.
-
-Aqui está o código limpo, otimizado e perfeitamente ajustado:
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -803,5 +796,3 @@ renderServicos();
 </script>
 </body>
 </html>
-
-```
