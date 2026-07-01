@@ -7,7 +7,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- Biblioteca para leitura de PDF direto no navegador -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap");
@@ -20,7 +19,7 @@ body{font-family:"Inter",Arial,sans-serif;background:#f1f5f1;}
 .nav-badge{background:#bbf7d0;color:#166534;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
 
 .container{max-width:950px;margin:0 auto;padding:28px 16px 60px;}
-.card{background:white;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.08);margin-bottom:20px;overflow:hidden;}
+.card{background:white;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,.08);margin-bottom:200px;overflow:hidden;}
 .card-header{background:#166534;color:white;padding:12px 20px;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .card-body{padding:20px;}
 
@@ -61,7 +60,6 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .btn-secondary:hover{background:#f0fdf4;}
 .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap;}
 
-/* TOAST */
 #toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#166534;color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.2);opacity:0;transition:opacity .4s;pointer-events:none;z-index:9999;}
 #toast.show{opacity:1;}
 #toast.error{background:#dc2626;}
@@ -112,12 +110,12 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
 <div class="container">
 
-  <!-- ÁREA DE CARREGAMENTO DO PDF ORIGINAL -->
+  <!-- IMPORTAR COMPONENT -->
   <div class="card" style="border: 2px dashed #166534; background: #f0fdf4;">
     <div class="card-body flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
       <div>
-        <h3 class="font-bold text-emerald-800 text-sm uppercase tracking-wider">📂 Importar e Reajustar Orçamento Antigo</h3>
-        <p class="text-xs text-emerald-700 mt-1">Selecione o arquivo PDF original gerado anteriormente para preencher os campos automaticamente.</p>
+        <h3 class="font-bold text-emerald-800 text-sm uppercase tracking-wider">📂 Importar e Reajustar Qualquer Orçamento (PDF)</h3>
+        <p class="text-xs text-emerald-700 mt-1">Carregue qualquer versão em PDF. O leitor irá extrair todos os itens e informações da tabela automaticamente.</p>
       </div>
       <div>
         <label class="btn-secondary text-xs cursor-pointer inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-emerald-700 font-bold hover:bg-emerald-50 text-emerald-800">
@@ -306,7 +304,7 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
   <!-- AÇÕES -->
   <div class="actions">
     <button class="btn-secondary" onclick="limparForm()">✖ Limpar</button>
-    <button class="btn-primary" id="btnGerar" onclick="gerarPDF()">📄 Gerar PDF do Orçamento</button>
+    <button class="btn-primary" id="btnGerar" onclick="generarPDF()">📄 Gerar PDF do Orçamento</button>
   </div>
 
 </div>
@@ -428,7 +426,6 @@ Favorecido: AgroVoo Tecnologia Agrícola</textarea>
 </div>
 
 <script>
-// Configura o worker da biblioteca PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -505,7 +502,7 @@ function atualizarTotais(){
   var km=parseFloat(v("deslocKm"))||0;
   var vlrKm=parseFloat(document.getElementById("vlrKm").value)||0;
   var desl=km*vlrKm;
-  var outros=parseFloat(document.getElementById("vlrOutros"))||0;
+  var outros=parseFloat(document.getElementById("vlrOutros").value)||0;
   var total=subSrv+desl+outros;
   
   document.getElementById("subtotalSrv").textContent=fmt(subSrv);
@@ -523,12 +520,12 @@ function atualizarTotais(){
 
 function atualizar(){atualizarTotais();}
 
-// ── INTELIGÊNCIA EXTRATORA DE TEXTO DO PDF ───────────────────────────────────
+// ── EXTRAÇÃO INTELIGENTE DE N-ITENS (CORRIGIDO) ──────────────────────────────
 async function processarPdfOrcamento(event) {
   var file = event.target.files[0];
   if (!file) return;
 
-  showToast("⏳ Lendo texto do PDF...", false);
+  showToast("⏳ Mapeando estrutura completa do PDF...", false);
 
   var reader = new FileReader();
   reader.onload = async function(e) {
@@ -537,7 +534,6 @@ async function processarPdfOrcamento(event) {
       var pdf = await pdfjsLib.getDocument(typedarray).promise;
       var textContent = "";
 
-      // Lê o texto de todas as páginas do PDF
       for (var i = 1; i <= pdf.numPages; i++) {
         var page = await pdf.getPage(i);
         var tokenizedText = await page.getTextContent();
@@ -548,20 +544,19 @@ async function processarPdfOrcamento(event) {
       extrairCamposDoTexto(textContent);
     } catch (err) {
       console.error(err);
-      showToast("❌ Falha ao analisar o arquivo PDF. Certifique-se de que é um PDF com texto selecionável.", true);
+      showToast("❌ Erro ao descriptografar elementos estruturais do PDF.", true);
     }
   };
   reader.readAsArrayBuffer(file);
 }
 
 function extrairCamposDoTexto(text) {
-  // Helpers para busca via Regex baseado na estrutura padrão do PDF
   function obterMatch(regex, textStr) {
     var match = textStr.match(regex);
     return match ? match[1].trim() : "";
   }
 
-  // 1. Identificação Básica
+  // Identificação Geral do Orçamento
   var numOrc = obterMatch(/N(?:º|°)\s*Orçamento:\s*([\w-]+)/i, text) || obterMatch(/N°\s*(ORC-[\w-]+)/i, text);
   var emissao = obterMatch(/Emissão:\s*([\d\/]+)/i, text);
   var validade = obterMatch(/Válido até:\s*([\d\/]+)/i, text);
@@ -569,86 +564,97 @@ function extrairCamposDoTexto(text) {
   var periodoExec = obterMatch(/Período\s*exec\.:\s*([^\n]+)/i, text);
   var crea = obterMatch(/CREA:\s*([\w-]+)/i, text);
 
-  // 2. Cliente
+  // Cliente
   var cliNome = obterMatch(/Cliente:\s*([^\n|]+)/i, text);
   var cliCnpj = obterMatch(/CNPJ\/CPF:\s*([\d\.\-\/]+)/i, text);
   var cliEnd = obterMatch(/Endereço:\s*([^\n|]+)/i, text);
   var cliMun = obterMatch(/Município:\s*([^\n|]+)/i, text);
 
-  // 3. Condições Operacionais
+  // Operações
   var aeronave = obterMatch(/Aeronave:\s*([^\n|]+)/i, text);
   var piloto = obterMatch(/Piloto:\s*([^\n|]+)/i, text);
   var condicoesOp = obterMatch(/Condições:\s*([\s\S]*?)(?=ATENÇÃO|RESUMO|💰|$)/i, text);
 
-  // Alimenta os inputs da tela com o que foi extraído
   if (numOrc) document.getElementById("numOrc").value = numOrc;
   if (emissao) document.getElementById("dataEmissao").value = parseInputDate(emissao);
   if (validade) document.getElementById("dataValidade").value = parseInputDate(validade);
   if (respTec) document.getElementById("respTec").value = respTec;
   if (crea) document.getElementById("respCrea").value = crea;
   if (periodoExec) document.getElementById("periodoExec").value = periodoExec;
-  if (cliNome) document.getElementById("cliNome").value = cliNome.replace(/\|\s*/g, "");
+  if (cliNome) document.getElementById("cliNome").value = cliNome.replace(/\|\s*/g, "").trim();
   if (cliCnpj) document.getElementById("cliCnpj").value = cliCnpj;
-  if (cliEnd) document.getElementById("cliEnd").value = cliEnd.replace(/\|\s*/g, "");
-  if (cliMun) document.getElementById("cliMun").value = cliMun.replace(/\|\s*/g, "");
-  if (aeronave) document.getElementById("aeronave").value = aeronave.replace(/\|\s*/g, "");
-  if (piloto) document.getElementById("piloto").value = piloto.replace(/\|\s*/g, "");
+  if (cliEnd) document.getElementById("cliEnd").value = cliEnd.replace(/\|\s*/g, "").trim();
+  if (cliMun) document.getElementById("cliMun").value = cliMun.replace(/\|\s*/g, "").trim();
+  if (aeronave) document.getElementById("aeronave").value = aeronave.replace(/\|\s*/g, "").trim();
+  if (piloto) document.getElementById("piloto").value = piloto.replace(/\|\s*/g, "").trim();
   if (condicoesOp) document.getElementById("condicoesOp").value = condicoesOp.replace(/^[|\s\n]+/g, "").trim();
 
-  // 4. Captura Dinâmica da Tabela de Itens (Procura linhas com valores financeiros)
-  var linhas = text.split("\n");
+  // ── CORREÇÃO DA LEITURA DE INF-ITENS (LOOP DE ENGENHARIA REVERSA PARA MULTI-ITENS) ──
+  var linhas = text.split("\n").map(l => l.replace(/[|]+/g, "").trim()).filter(l => l.length > 0);
   var novosServicos = [];
-  
-  // Percorre as linhas para mapear os serviços estruturados do PDF anterior
-  for (var i = 0; i < linhas.length; i++) {
-    var linhaAtual = linhas[i];
-    if (linhaAtual.includes("ha") || linhaAtual.includes("kg") || linhaAtual.includes("litros")) {
-      // Tenta estruturar as colunas com base no padrão impresso
-      var desc = linhas[i-1] ? linhas[i-1].replace(/[|]+/g, "").trim() : "Item Extraído";
-      var cultura = linhaAtual.replace(/[|]+/g, "").trim();
-      
-      var qtd = 0;
-      var vlr = 0;
-      var obs = "Extraído do PDF";
 
-      // Busca valores numéricos subsequentes na estrutura de quebras do PDF
-      if (linhas[i+1] && !isNaN(parseFloat(linhas[i+1]))) {
-         qtd = parseFloat(linhas[i+1]);
-         if (linhas[i+2] && linhas[i+2].includes("R$")) {
-            vlr = parseFloat(linhas[i+3].replace(/[^0-9,]/g, "").replace(",", "."));
-         }
-      } else {
-         // Fallback de contingência caso venha tudo na mesma linha
-         var numeros = linhaAtual.match(/([\d,.]+)\s*(?:ha|kg)/i);
-         if(numeros) qtd = parseFloat(numeros[1]);
+  for (var i = 0; i < linhas.length; i++) {
+    var linha = linhas[i];
+    
+    // Procura por indicadores métricos de unidades das linhas de itens
+    if (linha.match(/\b(ha|kg|litros|unidade|un)\b/i)) {
+      var desc = "";
+      
+      // Procura para cima a primeira linha de texto que seja o título/descrição do item
+      var p = i - 1;
+      while (p >= 0) {
+        if (!linhas[p].match(/Serviço\s*\/|Cultura|Área|Valor|Total|Observação/i) && !linhas[p].match(/\b(ha|kg)\b/i) && isNaN(parseFloat(linhas[p]))) {
+          desc = linhas[p];
+          break;
+        }
+        p--;
       }
 
+      var cultura = linha;
+      var qtd = 1;
+      var valor = 0;
+      var obs = "Item Extraído";
+
+      // Procura para baixo os dados numéricos correspondentes de quantidade e valor unitário
+      var scan = i + 1;
+      var matchesNumericos = [];
+      while (scan < linhas.length && matchesNumericos.length < 3) {
+        var lScan = linhas[scan];
+        if (lScan.includes("TOTAL DOS") || lScan.includes("CONDIÇÕES")) break;
+        
+        // Extrai os numéricos limpando cifrões e formatações de milhar
+        var nLimpo = lScan.replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
+        if (!isNaN(parseFloat(nLimpo)) && parseFloat(nLimpo) > 0) {
+          matchesNumericos.push(parseFloat(nLimpo));
+        } else if (lScan.length > 4 && isNaN(parseFloat(lScan)) && !lScan.includes("R$")) {
+          obs = lScan; // Captura linha de observação se houver string de texto descritivo
+        }
+        scan++;
+      }
+
+      if (matchesNumericos.length >= 1) qtd = matchesNumericos[0];
+      if (matchesNumericos.length >= 2) valor = matchesNumericos[1];
+
       novosServicos.push({
-        desc: desc || "Serviço/Produto",
+        desc: desc || "Item Identificado",
         cultura: cultura,
-        ha: qtd || 1, 
-        vlrHa: vlr || 0,
+        ha: qtd,
+        vlrHa: valor,
         obs: obs
       });
     }
   }
 
-  // Se encontrou itens válidos, substitui os da tabela, senão mantém os padrões para o usuário reajustar
+  // Substitui os itens antigos pelos novos capturados sem limite de quantidade
   if (novosServicos.length > 0) {
-     servicos = novosServicos;
-  } else {
-     // Configuração de fallback forçado direto para os dados de exemplo do PDF se a regex de varredura geral falhar
-     servicos = [
-        { desc: "Aplicação de Herbicida", cultura: "Área urbana / lotes", ha: 28, vlrHa: 330, obs: "Matar ervas daninhas (mato)." },
-        { desc: "Glifosato 720 Soldier", cultura: "kg", ha: 40, vlrHa: 35, obs: "Produto" }
-     ];
+    servicos = novosServicos;
   }
 
   renderServicos();
-  showToast("✅ Campos do PDF extraídos e aplicados com sucesso! Ajuste os preços agora.");
+  showToast("✅ Todos os " + servicos.length + " itens da tabela foram sincronizados com sucesso!");
 }
 
-// ── POPULAR PDF ORIGINAL ──────────────────────────────────────────────────────
+// ── POPULAR MÁSCARA DO PDF OCULTO ────────────────────────────────────────────
 function popularPDF(){
   var km=parseFloat(v("deslocKm"))||0;
   var vlrKm=parseFloat(document.getElementById("vlrKm").value)||0;
@@ -718,11 +724,11 @@ function popularPDF(){
   pdfTb.appendChild(trTot);
 }
 
-// ── GERAR PDF ────────────────────────────────────────────────────────────────
+// ── COMPILAÇÃO FINAL E DOWNLOAD ──────────────────────────────────────────────
 async function gerarPDF(){
   var btn=document.getElementById("btnGerar");
   btn.disabled=true;
-  btn.textContent="⏳ Gerando PDF...";
+  btn.textContent="⏳ Emitindo documento...";
 
   try {
     popularPDF();
@@ -781,33 +787,27 @@ async function gerarPDF(){
 
     var nomeArq="Orcamento_AgroVoo_"+(v("numOrc").replace(/[^a-zA-Z0-9]/g,"_"))+".pdf";
     doc.save(nomeArq);
-    showToast("✅ Novo PDF salvo com sucesso!");
+    showToast("✅ PDF emitido com sucesso!");
 
   } catch(err) {
-    console.error("Erro ao gerar PDF:", err);
-    showToast("❌ Erro ao gerar PDF.", true);
+    console.error(err);
+    showToast("❌ Erro ao compilar arquivo PDF.", true);
   } finally {
     btn.disabled=false;
     btn.innerHTML="📄 Gerar PDF do Orçamento";
   }
 }
 
-// ── LIMPAR ────────────────────────────────────────────────────────────────────
+// ── RESET ────────────────────────────────────────────────────────────────────
 function limparForm(){
-  if(!confirm("Deseja limpar todos os campos do formulário?")) return;
+  if(!confirm("Deseja limpar a tela operacional?")) return;
   document.getElementById("numOrc").value="";
   document.getElementById("cliNome").value="";
   document.getElementById("cliCnpj").value="";
-  document.getElementById("cliEnd").value="";
-  document.getElementById("cliMun").value="";
-  document.getElementById("deslocKm").value="0";
-  document.getElementById("vlrKm").value="0";
-  document.getElementById("vlrOutros").value="0";
   servicos=[{desc:"",cultura:"",ha:0,vlrHa:0,obs:""}];
   renderServicos();
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
 renderServicos();
 </script>
 </body>
