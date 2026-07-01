@@ -114,7 +114,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
     <div class="card-body flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
       <div>
         <h3 class="font-bold text-emerald-800 text-sm uppercase tracking-wider">📂 Importar e Reajustar Qualquer Orçamento (PDF)</h3>
-        <p class="text-xs text-emerald-700 mt-1">Arraste ou carregue o arquivo PDF do orçamento original para ler as tabelas de itens automaticamente.</p>
+        <p class="text-xs text-emerald-700 mt-1">Carregue o arquivo PDF do orçamento original para ler os dados do cliente e a tabela de itens automaticamente.</p>
       </div>
       <div>
         <label class="btn-secondary text-xs cursor-pointer inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-emerald-700 font-bold hover:bg-emerald-50 text-emerald-800">
@@ -445,7 +445,6 @@ function showToast(msg, isError){
   setTimeout(function(){el.className='';},3500);
 }
 
-// ── ITENS INICIAIS BASEADOS NO MODELO 3-ITENS DO DOCUMENTO ───────────────────
 var servicos=[
   { desc:"Aplicação de Herbicida", cultura:"Área urbana / lotes", ha:28, vlrHa:330, obs:"Matar ervas daninhas (mato). Voo sobre casas construídas com muitos obstáculos." },
   { desc:"Glifosato 720 Soldier", cultura:"kg", ha:40, vlrHa:35, obs:"Produto" },
@@ -507,12 +506,12 @@ function atualizarTotais(){
 
 function atualizar(){atualizarTotais();}
 
-// ── NOVO EXTRATOR ULTRA-OTIMIZADO PARA TODOS OS ITENS SEM LIMITES ───────────
+// ── PROCESSADOR CORRIGIDO E CALIBRADO (RESOLVE DADOS DO CLIENTE) ─────────────
 async function processarPdfOrcamento(event) {
   var file = event.target.files[0];
   if (!file) return;
 
-  showToast("⏳ Mapeando estrutura completa do PDF...", false);
+  showToast("⏳ Carregando dados do cliente e itens...", false);
 
   var reader = new FileReader();
   reader.onload = async function(e) {
@@ -531,69 +530,69 @@ async function processarPdfOrcamento(event) {
       extrairCamposDoTexto(textContent);
     } catch (err) {
       console.error(err);
-      showToast("❌ Erro ao descriptografar elementos estruturais do PDF.", true);
+      showToast("❌ Erro ao ler arquivo PDF.", true);
     }
   };
   reader.readAsArrayBuffer(file);
 }
 
 function extrairCamposDoTexto(text) {
-  function obterMatch(regex, textStr) {
+  // Helper robusto multiline que limpa barras horizontais do design da tabela do PDF
+  function obterMatchMultiline(regex, textStr) {
     var match = textStr.match(regex);
-    return match ? match[1].trim() : "";
+    if(match && match[1]) {
+       return match[1].replace(/[|\n]+/g, " ").replace(/\s+/g, " ").trim();
+    }
+    return "";
   }
 
-  // Identificação e Cabeçalhos
-  var numOrc = obterMatch(/N(?:º|°)\s*Orçamento:\s*([\w-]+)/i, text) || obterMatch(/N°\s*(ORC-[\w-]+)/i, text);
-  var emissao = obterMatch(/Emissão:\s*([\d\/]+)/i, text);
-  var validade = obterMatch(/Válido até:\s*([\d\/]+)/i, text);
-  var respTec = obterMatch(/Resp\.\s*Técnico:\s*([^\n]+)/i, text);
-  var periodoExec = obterMatch(/Período\s*exec\.:\s*([^\n]+)/i, text);
-  var crea = obterMatch(/CREA:\s*([\w-]+)/i, text);
+  // Captura dos Dados do Cliente usando limites dinâmicos da quebra de bloco
+  var cliNome = obterMatchMultiline(/Cliente:([\s\S]*?)(?=CNPJ\/CPF|$)/i, text);
+  var cliCnpj = obterMatchMultiline(/CNPJ\/CPF:([\s\S]*?)(?=Endereço|$)/i, text);
+  var cliEnd  = obterMatchMultiline(/Endereço:([\s\S]*?)(?=Município|$)/i, text);
+  var cliMun  = obterMatchMultiline(/Município:([\s\S]*?)(?=Contato|$)/i, text);
 
-  // Dados do Cliente
-  var cliNome = obterMatch(/Cliente:\s*([\s\S]*?)(?=CNPJ\/CPF|$)/i, text);
-  var cliCnpj = obterMatch(/CNPJ\/CPF:\s*([\d\.\-\/]+)/i, text);
-  var cliEnd = obterMatch(/Endereço:\s*([^\n|]+)/i, text);
-  var cliMun = obterMatch(/Município:\s*([^\n|]+)/i, text);
+  // Captura de Identificação e Datas do Orçamento
+  var numOrc = obterMatchMultiline(/N(?:º|°)\s*Orçamento:([\s\S]*?)(?=Emissão|$)/i, text) || obterMatchMultiline(/N°\s*(ORC-[\w-]+)/i, text);
+  var emissao = obterMatchMultiline(/Emissão:([\s\S]*?)(?=Válido|$)/i, text);
+  var validade = obterMatchMultiline(/Válido até:([\s\S]*?)(?=Resp|$)/i, text);
+  var respTec = obterMatchMultiline(/Resp\.\s*Técnico:([\s\S]*?)(?=Período|$)/i, text);
+  var periodoExec = obterMatchMultiline(/Período\s*exec\.:\s*([^\n|]+)/i, text);
 
-  // Operações
-  var aeronave = obterMatch(/Aeronave:\s*([^\n|]+)/i, text);
-  var piloto = obterMatch(/Piloto:\s*([^\n|]+)/i, text);
-  var condicoesOp = obterMatch(/Condições:\s*([\s\S]*?)(?=ATENÇÃO|RESUMO|$)/i, text);
+  // Atribuição direta nos inputs operacionais da tela
+  if (cliNome) document.getElementById("cliNome").value = cliNome;
+  if (cliCnpj) document.getElementById("cliCnpj").value = cliCnpj;
+  if (cliEnd)  document.getElementById("cliEnd").value = cliEnd;
+  if (cliMun)  document.getElementById("cliMun").value = cliMun;
 
-  if (numOrc) document.getElementById("numOrc").value = numOrc;
+  if (numOrc)  document.getElementById("numOrc").value = numOrc;
   if (emissao) document.getElementById("dataEmissao").value = parseInputDate(emissao);
   if (validade) document.getElementById("dataValidade").value = parseInputDate(validade);
-  if (respTec) document.getElementById("respTec").value = respTec;
-  if (crea) document.getElementById("respCrea").value = crea;
+  if (respTec)  document.getElementById("respTec").value = respTec;
   if (periodoExec) document.getElementById("periodoExec").value = periodoExec;
-  
-  if (cliNome) document.getElementById("cliNome").value = cliNome.replace(/[|\n]+/g, " ").replace(/\s+/g, " ").trim();
-  if (cliCnpj) document.getElementById("cliCnpj").value = cliCnpj;
-  if (cliEnd) document.getElementById("cliEnd").value = cliEnd.replace(/\|\s*/g, "").trim();
-  if (cliMun) document.getElementById("cliMun").value = cliMun.replace(/\|\s*/g, "").trim();
-  if (aeronave) document.getElementById("aeronave").value = aeronave.replace(/\|\s*/g, "").trim();
-  if (piloto) document.getElementById("piloto").value = piloto.replace(/\|\s*/g, "").trim();
-  if (condicoesOp) document.getElementById("condicoesOp").value = condicoesOp.replace(/^[|\s\n]+/g, "").trim();
 
-  // ── RECONSTRUTOR DE TABELA AVANÇADO (LÊ TODOS OS N-ITENS CORRETAMENTE) ──
+  // Condições de Campo
+  var aeronave = obterMatchMultiline(/Aeronave:([\s\S]*?)(?=Piloto|$)/i, text);
+  var piloto = obterMatchMultiline(/Piloto:([\s\S]*?)(?=Dificuldade|$)/i, text);
+  var condicoesOp = obterMatchMultiline(/Condições:([\s\S]*?)(?=ATENÇÃO|RESUMO|$)/i, text);
+
+  if (aeronave) document.getElementById("aeronave").value = aeronave;
+  if (piloto)   document.getElementById("piloto").value = piloto;
+  if (condicoesOp) document.getElementById("condicoesOp").value = condicoesOp;
+
+  // ── RECONSTRUTOR DE TABELA AVANÇADO (N-ITENS) ──
   var linhas = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
   var novosServicos = [];
 
   for (var i = 0; i < linhas.length; i++) {
-    // Detecta linhas contendo as unidades de medida estruturais da AgroVoo
     if (linhas[i] === "|" && linhas[i+1] && linhas[i+1].match(/^(ha|kg|It|litros)/i)) {
       var cultura = linhas[i+1].replace("|", "").trim();
-      
-      // Procura a descrição subindo na árvore de tags textuais do PDF
       var desc = "";
       var p = i - 1;
       while (p >= 0) {
         var txtP = linhas[p].replace("|", "").trim();
         if (txtP.length > 0 && !txtP.match(/Serviço\/Descrição|Cultura|Área|Valor\/ha|Total|Observação/i) && isNaN(parseFloat(txtP.replace("ha", "")))) {
           desc = linhas[p].replace("|", "").trim();
-          // Junta descrições que porventura tenham quebrado em duas linhas no PDF
           if (linhas[p-1] && !linhas[p-1].includes("|") && isNaN(parseFloat(linhas[p-1])) && !linhas[p-1].match(/IDENTIFICAÇÃO|DADOS/i)) {
             desc = linhas[p-1].trim() + " " + desc;
           }
@@ -602,7 +601,6 @@ function extrairCamposDoTexto(text) {
         p--;
       }
 
-      // Varre os dados numéricos subsequentes (Quantidade, Valor Unitário, Observação)
       var scan = i + 2;
       var numColetados = [];
       var obs = "";
@@ -630,13 +628,12 @@ function extrairCamposDoTexto(text) {
     }
   }
 
-  // Sincroniza e renderiza em tela se dados válidos forem capturados
   if (novosServicos.length > 0) {
     servicos = novosServicos;
   }
 
   renderServicos();
-  showToast("✅ " + servicos.length + " Itens/Serviços carregados com sucesso!");
+  showToast("✅ Dados do Cliente e " + servicos.length + " Itens sincronizados com sucesso!");
 }
 
 // ── POPULAR MÁSCARA DO PDF OCULTO ────────────────────────────────────────────
